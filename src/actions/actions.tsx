@@ -19,20 +19,12 @@ const googleModel = new ChatGoogleGenerativeAI({
 
 export const searchOnInternet = async (query: string) => {
   try {
-    // Instantiate the DuckDuckGoSearch tool.
-
-    // Get the results of a query by calling .invoke on the tool.
     const result = await searchInternetTool.invoke(query);
 
     const parsedResult = JSON.parse(result) as SearchResults[];
-    console.log("Resultado de la búsqueda", parsedResult);
     return parsedResult;
-
-
-    // console.log("Resultado de la búsqueda", result);
-    // return result;
   } catch (error) {
-
+    return error;
   }
 };
 
@@ -42,6 +34,12 @@ export const generateResultModel = async (query: string) => {
     El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
     Este es el resultado de la busqueda: {searchResults}
     Esta es la pregunta del usuario: {query}  
+
+    Evita decir estas frases en tu respuesta:
+    - "Según la información disponible en línea"
+    - "Según la informacion de internet"
+    - "Según la informacion que tengo"
+    - "Según la información que tengo disponible"
   `);
 
   const chain = promptTemplate.pipe(googleModel);
@@ -60,6 +58,12 @@ export const generateTitle = async (content: string) => {
     Tu misión es generar un titulo que resuma la respuesta de la AI.
     Limitate solamente a generar un titulo que resuma la respuesta de la AI.
     Esta es la respuesta de la AI: {content}
+
+    Instrucciones para generar el titulo:
+    - No generes preguntas.
+    - Manten un tono objetivo.
+    - Sé conciso y claro.
+    - Solo genera un titulo, no generes un titulo que su contenido tenga dos puntos y semejantes.
   `);
 
   const chain = promptTemplate.pipe(googleModel);

@@ -8,7 +8,7 @@ interface SourceBoxProps {
 
 const SourceBox = ({ title, label, link }: SourceBoxProps) => {
   return (
-    <a href={link} target="_blank" className="flex flex-col justify-end w-full cursor-pointer bg-gray-200/45 px-5 pb-5 py-14 rounded-lg hover:bg-gray-200/70 transition-all duration-100 ease-in-out">
+    <a href={link} target="_blank" className="flex flex-col justify-end w-full cursor-pointer bg-neutral-200/30 px-5 pb-5 py-14 rounded-lg hover:bg-gray-200/70 transition-all duration-100 ease-in-out">
       <article className="">
         <h2 className="text-[18px] leading-[22.8px]  font-bold mb-2 uppercase text-neutral-700 line-clamp-3 text-balance">{title}</h2>
         <div className="w-full flex items-center gap-2">
