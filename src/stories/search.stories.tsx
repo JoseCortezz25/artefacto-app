@@ -5,7 +5,14 @@ const meta = {
   title: 'Home/InputSearch',
   component: InputSearch,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    backgrounds: {
+      default: 'light',
+      values: [
+        { name: 'dark', value: '#1A202C' },
+        { name: 'light', value: '#fff' }
+      ]
+    }
   }
   // Thi
 } as Meta<typeof InputSearch>;
