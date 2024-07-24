@@ -159,7 +159,6 @@ export default function Home() {
                 <p>Loading...</p>
               )}
 
-
               {results && (
                 <>
                   <div>
