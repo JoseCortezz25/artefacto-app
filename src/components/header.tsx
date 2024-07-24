@@ -1,3 +1,4 @@
+import SheetSettings from "./sheet-settings";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { SettingsIcon } from "lucide-react";
@@ -27,11 +28,12 @@ const Header = ({ title }: HeaderProps) => {
             </SheetTrigger>
             <SheetContent>
               <SheetHeader>
-                <SheetTitle>Are you absolutely sure?</SheetTitle>
-                <SheetDescription>
-                  This action cannot be undone. This will permanently delete your account
-                  and remove your data from our servers.
+                <SheetTitle className="font-bold text-[19px]">Configuración</SheetTitle>
+                <SheetDescription className="text-[15px]">
+                  Configura el modelo y la API KEY para generar la busqueda.
                 </SheetDescription>
+
+                <SheetSettings />
               </SheetHeader>
             </SheetContent>
           </Sheet>

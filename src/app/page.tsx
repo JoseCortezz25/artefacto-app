@@ -18,10 +18,18 @@ export default function Home() {
   const [title, setTitle] = useState<string>("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
+  const [stepper, setStepper] = useState(1);
 
   const handleSearch = async (e: Event) => {
     setResults("");
     setSources([]);
+    if (stepper < 2) {
+      setStepper(2);
+    }
+
+    if (stepper >= 3) {
+      setStepper(3);
+    }
 
     if (!search) {
       toast.error("Ingrese una pregunta para buscar");
@@ -40,7 +48,11 @@ export default function Home() {
       setResults(response);
       setTitle(titleResponde);
       setLoading(false);
+      setStepper(3);
     } catch (error) {
+      if (stepper < 2) {
+        setStepper(1);
+      }
       setLoading(false);
     }
   };
@@ -78,7 +90,6 @@ export default function Home() {
       onClick: () => {
         setSearch("Joe Biden");
         handleSearch(new Event("submit"));
-
       }
     }
   ];
@@ -88,6 +99,7 @@ export default function Home() {
       <Header title={title} />
       <main className="bg-white flex min-h-[calc(100dvh-70px)] flex-col items-center justify-center px-4 py-10 md:p-10">
         <div className="w-full max-w-[1024px]">
+          <h2>{stepper}</h2>
 
           {/* Si no hay resultados y tampoco loading esta activo */}
           {!results && !loading && (
@@ -112,12 +124,11 @@ export default function Home() {
           )}
 
           {/* Si loading esta activo */}
-          {!results && loading && (
+          {!results && loading && stepper === 2 && (
             <p>Loading...</p>
           )}
 
-
-          {/* {!loading ? (
+          {results && !loading && stepper === 3 && (
             <section className="w-full mt-10 pb-10">
               {!!results && (
                 <div className="mb-14">
@@ -144,40 +155,56 @@ export default function Home() {
                 </div>
               )}
 
-              {results && (
-                <div>
-                  <Heading className=" my-5" content="Answer">
-                    <PenToolIcon className="size-[22px]" />
-                  </Heading>
-
-                  <div className="mb-6">
-                    {results}
-                  </div>
-
-                  <div className="flex gap-2 justify-between">
-                    <nav>
-                      <Button variant="ghost" onClick={onCopy}>
-                        <CopyIcon className="size-[16px] mr-2" />
-                        Copy answer
-                      </Button>
-                      <Button variant="ghost">
-                        <PencilIcon className="size-[16px] mr-2" />
-                        Rewrite
-                      </Button>
-                    </nav>
-
-                    <nav>
-                      <Button variant="ghost">
-                        <EllipsisVertical className="size-[16px]" />
-                      </Button>
-                    </nav>
-                  </div>
-                </div>
+              {loading && (
+                <p>Loading...</p>
               )}
+
+
+              {results && (
+                <>
+                  <div>
+                    <Heading className=" my-5" content="Answer">
+                      <PenToolIcon className="size-[22px]" />
+                    </Heading>
+
+                    <div className="mb-6">
+                      {results}
+                    </div>
+
+                    <div className="flex gap-2 justify-between">
+                      <nav>
+                        <Button variant="ghost" onClick={onCopy}>
+                          <CopyIcon className="size-[16px] mr-2" />
+                          Copy answer
+                        </Button>
+                        <Button variant="ghost">
+                          <PencilIcon className="size-[16px] mr-2" />
+                          Rewrite
+                        </Button>
+                      </nav>
+
+                      <nav>
+                        <Button variant="ghost">
+                          <EllipsisVertical className="size-[16px]" />
+                        </Button>
+                      </nav>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="mt-[35px]">
+                <InputSearch
+                  className="w-full"
+                  value={search}
+                  onChange={({ target }) => setSearch(target.value)}
+                  onSubmit={handleSearch}
+                />
+              </div>
+
             </section>
-          ) :
-            <p>Loading...</p>
-          } */}
+          )}
+
         </div>
       </main>
     </>

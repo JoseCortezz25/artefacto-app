@@ -74,3 +74,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+.group-fields {
+  @apply flex flex-col gap-2 mb-[24px];
+
+  label {
+    @apply font-bold text-[17px];
+  }
+
+  p {
+    @apply text-[15px] text-muted-foreground;
+  }
+}
