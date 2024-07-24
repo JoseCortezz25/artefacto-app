@@ -19,7 +19,12 @@ const googleModel = new ChatGoogleGenerativeAI({
 
 export const searchOnInternet = async (query: string) => {
   try {
+    console.log("Searching on internet...");
+    console.log("Query: ", query);
+
+
     const result = await searchInternetTool.invoke(query);
+    console.log("Result: ", result);
 
     const parsedResult = JSON.parse(result) as SearchResults[];
     return parsedResult;

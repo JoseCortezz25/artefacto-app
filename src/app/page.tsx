@@ -85,30 +85,39 @@ export default function Home() {
 
   return (
     <>
-      {/* <Header title={title} /> */}
-      <main className="bg-white flex min-h-[calc(100dvh-70px)] flex-col items-center justify-center p-10 ">
+      <Header title={title} />
+      <main className="bg-white flex min-h-[calc(100dvh-70px)] flex-col items-center justify-center px-4 py-10 md:p-10">
         <div className="w-full max-w-[1024px]">
 
-          <div className="bg-neutral-100/30 flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
-            <h1 className="font-bold text-[45px] text-neutral-900">Artefacto</h1>
-            <InputSearch
-              className="w-full"
-              value={search}
-              onChange={({ target }) => setSearch(target.value)}
-              onSubmit={handleSearch}
-            />
-
-            <div className="flex gap-4">
-              {tagMocks.map((tag, index) => (
-                <Button key={index} variant="tag" className="gap-2" onClick={tag.onClick}>
-                  <b className="text-[16px]">#</b><span>{tag.label}</span>
-                </Button>
-              ))}
+          {/* Si no hay resultados y tampoco loading esta activo */}
+          {!results && !loading && (
+            <div className="flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
+              <h1 className="font-bold text-center text-[27px] leading-[31px] md:text-[45px] md:leading-[49px] text-neutral-900">
+                ¿Qué deseas buscar?
+              </h1>
+              <InputSearch
+                className="w-full"
+                value={search}
+                onChange={({ target }) => setSearch(target.value)}
+                onSubmit={handleSearch}
+              />
+              <div className="flex flex-wrap gap-2 lg:gap-4">
+                {tagMocks.map((tag, index) => (
+                  <Button key={index} variant="tag" className="gap-2" onClick={tag.onClick}>
+                    <b className="text-[16px]">#</b><span>{tag.label}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Si loading esta activo */}
+          {!results && loading && (
+            <p>Loading...</p>
+          )}
 
 
-          {!loading ? (
+          {/* {!loading ? (
             <section className="w-full mt-10 pb-10">
               {!!results && (
                 <div className="mb-14">
@@ -116,7 +125,7 @@ export default function Home() {
                     <BookOpen className="size-[22px]" />
                   </Heading>
 
-                  <div className="grid grid-cols-4 gap-4 justify-between">
+                  <div className="flex flex-wrap md:grid md:grid-cols-4 gap-4 justify-between">
                     {(loading) ? (
                       <>
                         <Skeleton className="h-[130px]" />
@@ -168,7 +177,7 @@ export default function Home() {
             </section>
           ) :
             <p>Loading...</p>
-          }
+          } */}
         </div>
       </main>
     </>
