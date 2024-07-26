@@ -1,12 +1,14 @@
+"use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AIState, DELTA_STATUS, UIState } from "@/lib/types";
+import { AIState, DELTA_STATUS, UIState, User } from "@/lib/types";
 import { nanoid } from "nanoid";
 import { createAI, createStreamableUI, createStreamableValue, getMutableAIState } from "ai/rsc";
 import { streamText } from "ai";
 import { google } from '@ai-sdk/google';
+import Message from "@/components/message";
 
 const submitUserMessage = async (message: string) => {
-
+  "use server";
   const aiState = getMutableAIState<typeof AI>();
 
   // Update AI state with new message.
@@ -34,7 +36,7 @@ const submitUserMessage = async (message: string) => {
 
   try {
     const result = await streamText({
-      model: google('models/gemini-1.0-pro-latest'),
+      model: google('models/gemini-1.5-pro-latest'),
       temperature: 0.5,
       system: `
         Actua como un asistente personal para ayudarte a encontrar información en internet.
@@ -51,7 +53,7 @@ const submitUserMessage = async (message: string) => {
       tools: {}
     });
 
-    const textContent = '';
+    let textContent = '';
     spinnerStream.done(null);
 
     for await (const delta of result.fullStream) {
@@ -59,10 +61,34 @@ const submitUserMessage = async (message: string) => {
       console.log("delta", delta);
 
       if (type === DELTA_STATUS.TEXT_DELTA) {
+        console.log("------------ DELTA_STATUS.TEXT_DELTA ------------");
         console.log("delta", delta.textDelta);
+
+        const { textDelta } = delta;
+        textContent += textDelta;
+
+        messageStream.update(
+          <Message
+            role={User.AI}
+            content={textContent}
+          />
+        );
+
+        aiState.done({
+          ...aiState.get(),
+          messages: [
+            ...aiState.get().messages,
+            {
+              id: nanoid(),
+              role: 'assistant',
+              content: delta.textDelta
+            }
+          ]
+        });
 
       }
       if (type === DELTA_STATUS.TOOL_CALL) {
+        console.log("------------ DELTA_STATUS.TOOL_CALL ------------");
         console.log("delta toolName", delta.toolName);
         console.log("delta argsTextDelta", delta.argsTextDelta);
         console.log("delta toolCallId", delta.toolCallId);
@@ -75,7 +101,6 @@ const submitUserMessage = async (message: string) => {
     messageStream.done();
     return {
       id: nanoid(),
-      attachments: uiStream.value,
       spinner: spinnerStream.value,
       display: messageStream.value
     };

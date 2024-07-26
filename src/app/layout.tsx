@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.scss";
+import { AI } from "@/actions/chat";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -18,10 +19,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <main>
-          {children}
-        </main>
-        <Toaster richColors />
+        <AI
+          initialAIState={{
+            messages: []
+          }}
+        >
+          <main>
+            {children}
+          </main>
+          <Toaster richColors />
+        </AI>
       </body>
     </html>
   );
