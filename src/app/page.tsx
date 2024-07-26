@@ -1,5 +1,6 @@
 "use client";
 import { generateResultModel, generateTitle, searchOnInternet } from "@/actions/actions";
+import Chat from "@/components/chat";
 import Header from "@/components/header";
 import Heading from "@/components/heading";
 import InputSearch from "@/components/search";
@@ -11,24 +12,29 @@ import { BookOpen, CopyIcon, EllipsisVertical, PenToolIcon, PencilIcon } from "l
 import { useState } from "react";
 import { toast } from "sonner";
 
+export enum Steps {
+  Search = "Search",
+  Loading = "Loading",
+  Chat = "Chat"
+}
+
 export default function Home() {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState("");
   const [sources, setSources] = useState<SearchResults[]>([]);
   const [title, setTitle] = useState<string>("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
-  const [stepper, setStepper] = useState(1);
+  const [stepper, setStepper] = useState<Steps>(Steps.Search);
 
   const handleSearch = async (e: Event) => {
     setResults("");
     setSources([]);
-    if (stepper < 2) {
-      setStepper(2);
+    if (stepper === Steps.Search) {
+      setStepper(Steps.Loading);
     }
 
-    if (stepper >= 3) {
-      setStepper(3);
+    if (stepper === Steps.Loading) {
+      setStepper(Steps.Chat);
     }
 
     if (!search) {
@@ -42,16 +48,16 @@ export default function Home() {
       const response = await generateResultModel(search);
       const titleResponde = await generateTitle(search) as string;
 
-
       if (!response) return;
       setSources(sources);
       setResults(response);
       setTitle(titleResponde);
       setLoading(false);
-      setStepper(3);
+      setStepper(Steps.Chat);
+      setTitle("");
     } catch (error) {
-      if (stepper < 2) {
-        setStepper(1);
+      if (stepper === Steps.Loading) {
+        setStepper(Steps.Search);
       }
       setLoading(false);
     }
@@ -99,10 +105,7 @@ export default function Home() {
       <Header title={title} />
       <main className="bg-white flex min-h-[calc(100dvh-70px)] flex-col items-center justify-center px-4 py-10 md:p-10">
         <div className="w-full max-w-[1024px]">
-          <h2>{stepper}</h2>
-
-          {/* Si no hay resultados y tampoco loading esta activo */}
-          {!results && !loading && (
+          {stepper === Steps.Search && (
             <div className="flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
               <h1 className="font-bold text-center text-[27px] leading-[31px] md:text-[45px] md:leading-[49px] text-neutral-900">
                 ¿Qué deseas buscar?
@@ -123,87 +126,87 @@ export default function Home() {
             </div>
           )}
 
-          {/* Si loading esta activo */}
-          {!results && loading && stepper === 2 && (
+          {stepper === Steps.Loading && (
             <p>Loading...</p>
           )}
 
-          {results && !loading && stepper === 3 && (
-            <section className="w-full mt-10 pb-10">
-              {!!results && (
-                <div className="mb-14">
-                  <Heading className=" my-5" content="Source">
-                    <BookOpen className="size-[22px]" />
-                  </Heading>
+          {stepper === Steps.Chat && (
+            // <section className="w-full mt-10 pb-10">
+            //   {!!results && (
+            //     <div className="mb-14">
+            //       <Heading className=" my-5" content="Source">
+            //         <BookOpen className="size-[22px]" />
+            //       </Heading>
 
-                  <div className="flex flex-wrap md:grid md:grid-cols-4 gap-4 justify-between">
-                    {(loading) ? (
-                      <>
-                        <Skeleton className="h-[130px]" />
-                        <Skeleton className="h-[130px]" />
-                        <Skeleton className="h-[130px]" />
-                        <Skeleton className="h-[130px]" />
-                      </>
-                    ) :
-                      <>
-                        {sources && sources.slice(0, 4).map((result, index) => (
-                          <SourceBox key={index} title={result.title} label={result.link} link={result.link} />
-                        ))}
-                      </>
-                    }
-                  </div>
-                </div>
-              )}
+            //       <div className="flex flex-wrap md:grid md:grid-cols-4 gap-4 justify-between">
+            //         {(loading) ? (
+            //           <>
+            //             <Skeleton className="h-[130px]" />
+            //             <Skeleton className="h-[130px]" />
+            //             <Skeleton className="h-[130px]" />
+            //             <Skeleton className="h-[130px]" />
+            //           </>
+            //         ) :
+            //           <>
+            //             {sources && sources.slice(0, 4).map((result, index) => (
+            //               <SourceBox key={index} title={result.title} label={result.link} link={result.link} />
+            //             ))}
+            //           </>
+            //         }
+            //       </div>
+            //     </div>
+            //   )}
 
-              {loading && (
-                <p>Loading...</p>
-              )}
+            //   {loading && (
+            //     <p>Loading...</p>
+            //   )}
 
-              {results && (
-                <>
-                  <div>
-                    <Heading className=" my-5" content="Answer">
-                      <PenToolIcon className="size-[22px]" />
-                    </Heading>
+            //   {results && (
+            //     <>
+            //       <div>
+            //         <Heading className=" my-5" content="Answer">
+            //           <PenToolIcon className="size-[22px]" />
+            //         </Heading>
 
-                    <div className="mb-6">
-                      {results}
-                    </div>
+            //         <div className="mb-6">
+            //           {results}
+            //         </div>
 
-                    <div className="flex gap-2 justify-between">
-                      <nav>
-                        <Button variant="ghost" onClick={onCopy}>
-                          <CopyIcon className="size-[16px] mr-2" />
-                          Copy answer
-                        </Button>
-                        <Button variant="ghost">
-                          <PencilIcon className="size-[16px] mr-2" />
-                          Rewrite
-                        </Button>
-                      </nav>
+            //         <div className="flex gap-2 justify-between">
+            //           <nav>
+            //             <Button variant="ghost" onClick={onCopy}>
+            //               <CopyIcon className="size-[16px] mr-2" />
+            //               Copy answer
+            //             </Button>
+            //             <Button variant="ghost">
+            //               <PencilIcon className="size-[16px] mr-2" />
+            //               Rewrite
+            //             </Button>
+            //           </nav>
 
-                      <nav>
-                        <Button variant="ghost">
-                          <EllipsisVertical className="size-[16px]" />
-                        </Button>
-                      </nav>
-                    </div>
-                  </div>
-                </>
-              )}
+            //           <nav>
+            //             <Button variant="ghost">
+            //               <EllipsisVertical className="size-[16px]" />
+            //             </Button>
+            //           </nav>
+            //         </div>
+            //       </div>
+            //     </>
+            //   )}
 
-              <div className="mt-[35px]">
-                <InputSearch
-                  className="w-full"
-                  value={search}
-                  onChange={({ target }) => setSearch(target.value)}
-                  onSubmit={handleSearch}
-                />
-              </div>
+            //   <div className="mt-[35px]">
+            //     <InputSearch
+            //       className="w-full"
+            //       value={search}
+            //       onChange={({ target }) => setSearch(target.value)}
+            //       onSubmit={handleSearch}
+            //       variant={Steps.Chat}
+            //     />
+            //   </div>
 
-            </section>
+            // </section>
+            <Chat />
           )}
-
         </div>
       </main>
     </>
