@@ -3,6 +3,7 @@ import { SearchResults } from "@/lib/types";
 import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -11,6 +12,12 @@ const searchInternetTool = new DuckDuckGoSearch({
   },
   verbose: true
 });
+
+const wikipediaTool = new WikipediaQueryRun({
+  topKResults: 4,
+  maxDocContentLength: 4000
+});
+
 
 const googleModel = new ChatGoogleGenerativeAI({
   maxOutputTokens: 2048,
@@ -34,6 +41,9 @@ export const searchOnInternet = async (query: string) => {
 };
 
 export const generateResultModel = async (query: string) => {
+  console.group("generateResultModel");
+  console.log("Generating result model...");
+
   const promptTemplate = PromptTemplate.fromTemplate(`
     Actua como un asistente personal para ayudarte a encontrar información en internet.
     El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
@@ -54,6 +64,8 @@ export const generateResultModel = async (query: string) => {
     searchResults: await searchInternetTool.invoke(query)
   });
 
+  console.log("Result: ", result);
+  console.groupEnd();
   return result.content as string;
 };
 
@@ -79,3 +91,49 @@ export const generateTitle = async (content: string) => {
 
   return result.content as string;
 };
+
+export const searchOnWikipedia = async (query: string) => {
+  try {
+    console.group("searchOnWikipedia");
+    console.log("Searching on Wikipedia...");
+    console.log("Query: ", query);
+
+    const result = await wikipediaTool.invoke(query);
+    console.log("Result: ", result);
+    console.groupEnd();
+
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+
+// export const generateResultFromWikipedia = async (query: string) => {
+//   console.group("generateResultModel");
+//   console.log("Generating result model...");
+
+//   const promptTemplate = PromptTemplate.fromTemplate(`
+//     Actua como un asistente personal para ayudarte a encontrar información en internet.
+//     El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
+//     Este es el resultado de la busqueda: {searchResults}
+//     Esta es la pregunta del usuario: {query}  
+
+//     Evita decir estas frases en tu respuesta:
+//     - "Según la información disponible en línea"
+//     - "Según la informacion de internet"
+//     - "Según la informacion que tengo"
+//     - "Según la información que tengo disponible"
+//   `);
+
+//   const chain = promptTemplate.pipe(googleModel);
+
+//   const result = await chain.invoke({
+//     query: query,
+//     searchResults: await 
+//   });
+
+//   console.log("Result: ", result);
+//   console.groupEnd();
+//   return result.content as string;
+// };

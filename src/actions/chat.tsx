@@ -1,11 +1,13 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AIState, DELTA_STATUS, UIState, User } from "@/lib/types";
+import { AIState, DELTA_STATUS, SourceType, UIState, User } from "@/lib/types";
 import { nanoid } from "nanoid";
 import { createAI, createStreamableUI, createStreamableValue, getMutableAIState } from "ai/rsc";
 import { streamText } from "ai";
 import { google } from '@ai-sdk/google';
 import Message from "@/components/message";
+import { generateResultModel, searchOnInternet, searchOnWikipedia } from "./actions";
+import { z } from "zod";
 
 const submitUserMessage = async (message: string) => {
   "use server";
@@ -50,7 +52,20 @@ const submitUserMessage = async (message: string) => {
         - "Según la información que tengo disponible"
       `,
       messages: [...history],
-      tools: {}
+      tools: {
+        searchOnInternet: {
+          description: 'Usa en internet para obtener información que no tengas presente para responder al usuario.',
+          parameters: z.object({
+            question: z.string().describe('La pregunta que el usuario hizo al asistente.')
+          })
+        },
+        searchOnWikipedia: {
+          description: 'Usa Wikipedia para obtener información sobre hechos historicos, historia, geografia, eventos, personas, etc que no tengas presente para responder al usuario.',
+          parameters: z.object({
+            question: z.string().describe('La pregunta que el usuario hizo al asistente.')
+          })
+        }
+      }
     });
 
     let textContent = '';
@@ -92,6 +107,63 @@ const submitUserMessage = async (message: string) => {
         console.log("delta toolName", delta.toolName);
         console.log("delta argsTextDelta", delta.argsTextDelta);
         console.log("delta toolCallId", delta.toolCallId);
+
+        console.log("TOOL ", delta.toolName);
+
+        if (delta.toolName === 'searchOnInternet') {
+          console.log('QUESTION', delta.args.question);
+
+          const answer = await generateResultModel(delta.args.question);
+          console.log("searchResults", answer);
+
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: answer
+              }
+            ]
+          });
+
+          messageStream.update(
+            <Message
+              role={User.AI}
+              content={answer}
+              badge={SourceType.Internet}
+            />
+          );
+        }
+
+        if (delta.toolName === 'searchOnWikipedia') {
+          console.log('QUESTION', delta.args.question);
+
+          const answer = await searchOnWikipedia(delta.args.question);
+          console.log("searchResults", answer);
+
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: answer
+              }
+            ]
+          });
+
+          messageStream.update(
+            <Message
+              role={User.AI}
+              content={answer}
+              badge={SourceType.Wikipedia}
+            />
+          );
+        }
+
 
       }
     }

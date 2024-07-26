@@ -37,10 +37,10 @@ const Chat = () => {
   };
 
   return (
-    <section className="h-[calc(90dvh-80px)] flex flex-col">
-      <div className="w-full flex flex-col gap-3 flex-grow">
-        {messages.map(({ id, display }) => (
-          <div key={id} className="w-full">
+    <section className="h-[calc(90dvh-80px)] flex flex-col justify-between">
+      <div className="w-full max-h-[70dvh] flex flex-col gap-3 flex-grow overflow-y-scroll no-scrollbar">
+        {messages.map(({ id, display }, index) => (
+          <div key={index} className="w-full">
             {display}
           </div>
         ))}

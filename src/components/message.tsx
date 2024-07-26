@@ -3,14 +3,15 @@ import { Brain, CopyIcon, EllipsisVertical, PencilIcon, User2Icon } from "lucide
 import Heading from "./heading";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { User } from "@/lib/types";
+import { SourceType, User } from "@/lib/types";
 
 interface MessageProps {
   role: User;
   content: string;
+  badge?: SourceType
 };
 
-const Message = ({ role = User.AI, content }: MessageProps) => {
+const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer }: MessageProps) => {
   const onCopy = async () => {
     if (!content) return;
     await navigator.clipboard.writeText(content);
@@ -32,8 +33,19 @@ const Message = ({ role = User.AI, content }: MessageProps) => {
           </Heading>
         )}
       </div>
-      <div className="my-2">
+      <div className="my-2 flex flex-col items-start gap-2">
         {content}
+        {badge === SourceType.Internet && (
+          <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+            Internet
+          </span>
+        )}
+
+        {badge === SourceType.Wikipedia && (
+          <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+            Wikipedia
+          </span>
+        )}
       </div>
       {role === User.AI && (
         <div className="flex gap-2 justify-between">

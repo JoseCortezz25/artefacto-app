@@ -19,7 +19,7 @@ export type UIState = Array<{
 
 export enum DELTA_STATUS {
   ERROR = 'error',
-  TOOL_CALL = 'tool-call-delta',
+  TOOL_CALL = 'tool-call',
   TEXT_DELTA = 'text-delta',
   FINISH = 'finish'
 }
@@ -33,4 +33,10 @@ export enum Steps {
   Search = 'Search',
   Loading = 'Loading',
   Chat = 'Chat'
+}
+
+export enum SourceType {
+  Wikipedia = 'Wikipedia',
+  Internet = 'Internet',
+  NormalAnswer = 'NormalAnswer'
 }
