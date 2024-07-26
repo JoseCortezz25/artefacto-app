@@ -3,18 +3,14 @@ import { Brain, CopyIcon, EllipsisVertical, PencilIcon, User2Icon } from "lucide
 import Heading from "./heading";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-
-export enum User {
-  AI = 'ai',
-  User = 'user'
-}
+import { User } from "@/lib/types";
 
 interface MessageProps {
   role: User;
   content: string;
 };
 
-const Message = ({ role, content }: MessageProps) => {
+const Message = ({ role = User.AI, content }: MessageProps) => {
   const onCopy = async () => {
     if (!content) return;
     await navigator.clipboard.writeText(content);

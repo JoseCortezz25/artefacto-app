@@ -1,8 +1,10 @@
+"use client";
+
 import { ArrowUpRight, Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import { ChangeEventHandler, FormEventHandler, InputHTMLAttributes } from "react";
-import { Steps } from "@/app/page";
+import { ChangeEventHandler, InputHTMLAttributes } from "react";
+import { Steps } from "@/lib/types";
 
 interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
@@ -14,7 +16,11 @@ interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Search, ...props }: InputSearchProps) => {
   return (
-    <form onSubmit={onSubmit} className={cn("pl-4 bg-neutral-200/30 w-full flex gap-5 justify-between items-center rounded-full transition-all duration-200", className)}>
+    <form
+      onSubmit={onSubmit}
+      className={cn("pl-4 bg-neutral-200/30 w-full flex gap-5 justify-between items-center rounded-full transition-all duration-200", className)}
+      role="search"
+    >
       <div className="flex-grow">
         <Input
           placeholder="¿Qué deseas buscar?"

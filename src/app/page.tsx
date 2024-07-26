@@ -1,34 +1,22 @@
 "use client";
-import { generateResultModel, generateTitle, searchOnInternet } from "@/actions/actions";
 import Chat from "@/components/chat";
 import Header from "@/components/header";
-import Heading from "@/components/heading";
+// import Heading from "@/components/heading";
 import InputSearch from "@/components/search";
-import SourceBox from "@/components/source-box";
+// import SourceBox from "@/components/source-box";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SearchResults } from "@/lib/types";
-import { BookOpen, CopyIcon, EllipsisVertical, PenToolIcon, PencilIcon } from "lucide-react";
+// import { Skeleton } from "@/components/ui/skeleton";
+import { Steps } from "@/lib/types";
+// import { BookOpen, CopyIcon, EllipsisVertical, PenToolIcon, PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export enum Steps {
-  Search = "Search",
-  Loading = "Loading",
-  Chat = "Chat"
-}
-
 export default function Home() {
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState("");
-  const [sources, setSources] = useState<SearchResults[]>([]);
   const [title, setTitle] = useState<string>("");
-  const [loading, setLoading] = useState(false);
   const [stepper, setStepper] = useState<Steps>(Steps.Search);
 
   const handleSearch = async (e: Event) => {
-    setResults("");
-    setSources([]);
     if (stepper === Steps.Search) {
       setStepper(Steps.Loading);
     }
@@ -42,31 +30,15 @@ export default function Home() {
     }
 
     e.preventDefault();
-    setLoading(true);
     try {
-      const sources = await searchOnInternet(search) as SearchResults[];
-      const response = await generateResultModel(search);
-      const titleResponde = await generateTitle(search) as string;
 
-      if (!response) return;
-      setSources(sources);
-      setResults(response);
-      setTitle(titleResponde);
-      setLoading(false);
       setStepper(Steps.Chat);
       setTitle("");
     } catch (error) {
       if (stepper === Steps.Loading) {
         setStepper(Steps.Search);
       }
-      setLoading(false);
     }
-  };
-
-  const onCopy = async () => {
-    if (!results) return;
-    await navigator.clipboard.writeText(results);
-    toast.success("La respuesta ha sido copiada al portapapeles");
   };
 
   const tagMocks = [
@@ -103,7 +75,7 @@ export default function Home() {
   return (
     <>
       <Header title={title} />
-      <main className="bg-white flex min-h-[calc(100dvh-70px)] flex-col items-center justify-center px-4 py-10 md:p-10">
+      <main className="bg-white flex min-h-[calc(100dvh-90px)] flex-col items-center justify-center px-4 py-7 md:px-10 md:py-0">
         <div className="w-full max-w-[1024px]">
           {stepper === Steps.Search && (
             <div className="flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
@@ -131,80 +103,6 @@ export default function Home() {
           )}
 
           {stepper === Steps.Chat && (
-            // <section className="w-full mt-10 pb-10">
-            //   {!!results && (
-            //     <div className="mb-14">
-            //       <Heading className=" my-5" content="Source">
-            //         <BookOpen className="size-[22px]" />
-            //       </Heading>
-
-            //       <div className="flex flex-wrap md:grid md:grid-cols-4 gap-4 justify-between">
-            //         {(loading) ? (
-            //           <>
-            //             <Skeleton className="h-[130px]" />
-            //             <Skeleton className="h-[130px]" />
-            //             <Skeleton className="h-[130px]" />
-            //             <Skeleton className="h-[130px]" />
-            //           </>
-            //         ) :
-            //           <>
-            //             {sources && sources.slice(0, 4).map((result, index) => (
-            //               <SourceBox key={index} title={result.title} label={result.link} link={result.link} />
-            //             ))}
-            //           </>
-            //         }
-            //       </div>
-            //     </div>
-            //   )}
-
-            //   {loading && (
-            //     <p>Loading...</p>
-            //   )}
-
-            //   {results && (
-            //     <>
-            //       <div>
-            //         <Heading className=" my-5" content="Answer">
-            //           <PenToolIcon className="size-[22px]" />
-            //         </Heading>
-
-            //         <div className="mb-6">
-            //           {results}
-            //         </div>
-
-            //         <div className="flex gap-2 justify-between">
-            //           <nav>
-            //             <Button variant="ghost" onClick={onCopy}>
-            //               <CopyIcon className="size-[16px] mr-2" />
-            //               Copy answer
-            //             </Button>
-            //             <Button variant="ghost">
-            //               <PencilIcon className="size-[16px] mr-2" />
-            //               Rewrite
-            //             </Button>
-            //           </nav>
-
-            //           <nav>
-            //             <Button variant="ghost">
-            //               <EllipsisVertical className="size-[16px]" />
-            //             </Button>
-            //           </nav>
-            //         </div>
-            //       </div>
-            //     </>
-            //   )}
-
-            //   <div className="mt-[35px]">
-            //     <InputSearch
-            //       className="w-full"
-            //       value={search}
-            //       onChange={({ target }) => setSearch(target.value)}
-            //       onSubmit={handleSearch}
-            //       variant={Steps.Chat}
-            //     />
-            //   </div>
-
-            // </section>
             <Chat />
           )}
         </div>

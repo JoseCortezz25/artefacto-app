@@ -1,4 +1,5 @@
-import Message, { User } from "@/components/message";
+import Message from "@/components/message";
+import { User } from "@/lib/types";
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
