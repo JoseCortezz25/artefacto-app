@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import InputSearch from "./search";
-import { Steps } from "@/app/page";
+import { Steps } from "@/lib/types";
 import { nanoid } from "nanoid";
 import { useActions, useUIState } from "ai/rsc";
 import Message from "./message";
