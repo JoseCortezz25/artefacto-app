@@ -1,0 +1,21 @@
+{/* Checkbox.mdx */}
+
+import { Canvas, Meta } from '@storybook/blocks';
+
+import * as Message from './message.stories.tsx';
+
+<Meta of={Message} />
+
+# Message Component
+
+El componente `Message` es un componente de interfaz de usuario que se utiliza para mostrar mensajes a los usuarios. Este componente puede ser utilizado en diferentes contextos dentro de la aplicación para mostrar información, alertas, errores, o cualquier otro tipo de mensaje que necesite ser comunicado al usuario.
+
+En esta sección se presentan los diferentes tipos de mensajes que pueden ser mostrados utilizando el componente `Message`.
+
+## User Message
+
+<Canvas of={Message.UserMessage} />
+
+## AI Message
+
+<Canvas of={Message.AIMessage} />
