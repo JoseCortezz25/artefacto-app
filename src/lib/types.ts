@@ -23,3 +23,14 @@ export enum DELTA_STATUS {
   TEXT_DELTA = 'text-delta',
   FINISH = 'finish'
 }
+
+export enum User {
+  AI = 'ai',
+  User = 'user'
+}
+
+export enum Steps {
+  Search = 'Search',
+  Loading = 'Loading',
+  Chat = 'Chat'
+}
