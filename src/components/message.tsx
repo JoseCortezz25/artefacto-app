@@ -33,7 +33,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer }: M
           </Heading>
         )}
       </div>
-      <div className="my-2 flex flex-col items-start gap-2">
+      <div className="flex flex-col items-start gap-2">
         {content}
         {badge === SourceType.Internet && (
           <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">

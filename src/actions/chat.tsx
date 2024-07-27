@@ -6,7 +6,7 @@ import { createAI, createStreamableUI, createStreamableValue, getMutableAIState 
 import { streamText } from "ai";
 import { google } from '@ai-sdk/google';
 import Message from "@/components/message";
-import { generateResultModel, searchOnInternet, searchOnWikipedia } from "./actions";
+import { generateResultModel, searchOnWikipedia } from "./actions";
 import { z } from "zod";
 
 const submitUserMessage = async (message: string) => {
@@ -34,7 +34,6 @@ const submitUserMessage = async (message: string) => {
   const textStream = createStreamableValue('');
   const spinnerStream = createStreamableUI(<div className="w-full flex items-center justify-center">Cargando...</div>);
   const messageStream = createStreamableUI(null);
-  const uiStream = createStreamableUI();
 
   try {
     const result = await streamText({
@@ -104,17 +103,8 @@ const submitUserMessage = async (message: string) => {
       }
       if (type === DELTA_STATUS.TOOL_CALL) {
         console.log("------------ DELTA_STATUS.TOOL_CALL ------------");
-        console.log("delta toolName", delta.toolName);
-        console.log("delta argsTextDelta", delta.argsTextDelta);
-        console.log("delta toolCallId", delta.toolCallId);
-
-        console.log("TOOL ", delta.toolName);
-
         if (delta.toolName === 'searchOnInternet') {
-          console.log('QUESTION', delta.args.question);
-
           const answer = await generateResultModel(delta.args.question);
-          console.log("searchResults", answer);
 
           aiState.done({
             ...aiState.get(),
@@ -138,10 +128,7 @@ const submitUserMessage = async (message: string) => {
         }
 
         if (delta.toolName === 'searchOnWikipedia') {
-          console.log('QUESTION', delta.args.question);
-
           const answer = await searchOnWikipedia(delta.args.question);
-          console.log("searchResults", answer);
 
           aiState.done({
             ...aiState.get(),
@@ -168,20 +155,20 @@ const submitUserMessage = async (message: string) => {
       }
     }
 
-    uiStream.done();
+    spinnerStream.done();
     textStream.done();
     messageStream.done();
-    return {
-      id: nanoid(),
-      spinner: spinnerStream.value,
-      display: messageStream.value
-    };
 
   } catch (error) {
-    uiStream.error(error);
+    spinnerStream.error(error);
     textStream.error(error);
     messageStream.error(error);
   }
+  return {
+    id: nanoid(),
+    spinner: spinnerStream.value,
+    display: messageStream.value
+  };
 };
 
 // createAI creates a new ai/rsc instance.

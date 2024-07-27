@@ -39,8 +39,9 @@ const Chat = () => {
   return (
     <section className="h-[calc(90dvh-80px)] flex flex-col justify-between">
       <div className="w-full max-h-[70dvh] flex flex-col gap-3 flex-grow overflow-y-scroll no-scrollbar">
-        {messages.map(({ id, display }, index) => (
+        {messages.map(({ spinner, display }, index) => (
           <div key={index} className="w-full">
+            {spinner}
             {display}
           </div>
         ))}

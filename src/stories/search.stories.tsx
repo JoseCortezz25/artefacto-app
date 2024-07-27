@@ -1,4 +1,4 @@
-import { Steps } from "@/app/page";
+import { Steps } from "@/lib/types";
 import InputSearch from "@/components/search";
 import { Meta, StoryObj } from "@storybook/react";
 
