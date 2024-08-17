@@ -1,47 +1,43 @@
 "use client";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import InputSearch from "./search";
-import { Steps } from "@/lib/types";
-import { nanoid } from "nanoid";
+import { Steps, User } from "@/lib/types";
 import { useActions, useUIState } from "ai/rsc";
+import { ClientMessage } from "@/actions/chat";
+import { generateId } from "ai";
 import Message from "./message";
-import { AI } from "@/actions/chat";
-import { User } from "@/lib/types";
 
 const Chat = () => {
   const [search, setSearch] = useState("");
   const { submitUserMessage } = useActions();
-  const [messages, setMessages] = useUIState<typeof AI>();
+  const [conversation, setConversation] = useUIState();
 
   const handleSearch = async (e: Event) => {
     e.preventDefault();
-    try {
 
-      const value = search.trim();
-      setSearch('');
-      if (!value) return;
+    const value = search.trim();
+    setSearch('');
+    if (!value) return;
 
-      setMessages(currentMessages => [
-        ...currentMessages,
-        {
-          id: nanoid(),
-          display: <Message role={User.User} content={value} />
-        }
-      ]);
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
+    ]);
 
-      const responseMessage = await submitUserMessage(search);
-      setMessages(currentMessages => [...currentMessages, responseMessage]);
-    } catch (error) {
-      console.log("error", error);
-    }
+    const message = await submitUserMessage(value);
+
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      message
+    ]);
   };
 
   return (
     <section className="h-[calc(90dvh-80px)] flex flex-col justify-between">
       <div className="w-full max-h-[70dvh] flex flex-col gap-3 flex-grow overflow-y-scroll no-scrollbar">
-        {messages.map(({ spinner, display }, index) => (
+        {conversation.map(({ display }: { display: ReactNode }, index: number) => (
           <div key={index} className="w-full">
-            {spinner}
+            {/* {spinner} */}
             {display}
           </div>
         ))}

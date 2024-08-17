@@ -1,13 +1,13 @@
 "use client";
-import { AI } from "@/actions/chat";
+import { ClientMessage } from "@/actions/chat";
 import Chat from "@/components/chat";
 import Header from "@/components/header";
 import Message from "@/components/message";
 import InputSearch from "@/components/search";
 import { Button } from "@/components/ui/button";
 import { Steps, User } from "@/lib/types";
+import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { nanoid } from "nanoid";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -17,7 +17,8 @@ export default function Home() {
   const [stepper, setStepper] = useState<Steps>(Steps.Search);
   const { submitUserMessage } = useActions();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setMessages] = useUIState<typeof AI>();
+  const [_, setConversation] = useUIState();
+
 
   const handleSearch = async (e: Event) => {
     if (stepper === Steps.Search) {
@@ -35,35 +36,30 @@ export default function Home() {
     e.preventDefault();
 
     try {
-
       const value = search.trim();
       setSearch('');
       if (!value) return;
 
-      setMessages(currentMessages => [
-        ...currentMessages,
-        {
-          id: nanoid(),
-          display: <Message role={User.User} content={value} />
-        }
-      ]);
-
       setStepper(Steps.Chat);
       setTitle("");
-      const responseMessage = await submitUserMessage(search);
-      setMessages(currentMessages => [...currentMessages, responseMessage]);
+
+      setConversation((currentConversation: ClientMessage[]) => [
+        ...currentConversation,
+        { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
+      ]);
+
+      const message = await submitUserMessage(value);
+
+      setConversation((currentConversation: ClientMessage[]) => [
+        ...currentConversation,
+        message
+      ]);
+
     } catch (error) {
       if (stepper === Steps.Loading) {
         setStepper(Steps.Search);
       }
     }
-    // try {
-
-    // } catch (error) {
-    //   if (stepper === Steps.Loading) {
-    //     setStepper(Steps.Search);
-    //   }
-    // }
   };
 
   const tagMocks = [

@@ -19,11 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <AI
-          initialAIState={{
-            messages: []
-          }}
-        >
+        <AI>
           <main>
             {children}
           </main>
