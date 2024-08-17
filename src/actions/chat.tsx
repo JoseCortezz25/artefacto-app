@@ -8,7 +8,7 @@ import { generateResultModel, searchOnWikipedia } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
-import { User } from "@/lib/types";
+import { SourceType, User } from "@/lib/types";
 
 
 export interface ServerMessage {
@@ -27,9 +27,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
   const history = getMutableAIState();
 
-  console.log("history", history);
   console.log("history", history.get());
-
 
   const result = await streamUI({
     model: google('models/gemini-1.5-pro-latest'),
@@ -73,8 +71,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
           ]);
 
 
-          return <Message role={User.AI} content={answer} />;
-          //  <div>{answer}</div>;
+          return <Message role={User.AI} content={answer} badge={SourceType.Internet} />;
         }
       }
       // searchOnWikipedia: {

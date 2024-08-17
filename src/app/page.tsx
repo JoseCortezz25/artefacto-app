@@ -100,9 +100,14 @@ export default function Home() {
         <div className="w-full max-w-[1024px]">
           {stepper === Steps.Search && (
             <div className="flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
-              <h1 className="font-bold text-center text-[27px] leading-[31px] md:text-[45px] md:leading-[49px] text-neutral-900">
-                ¿Qué deseas buscar?
-              </h1>
+              <div className="mb-5">
+                <h2 className="font-bold text-center text-[27px] leading-[27px] md:text-[45px] md:leading-[43px] text-neutral-900">
+                  Donde la creatividad
+                </h2>
+                <h2 className="font-bold text-center text-[27px] leading-[27px] md:text-[45px] md:leading-[43px] text-neutral-900">
+                  se une al conocimiento
+                </h2>
+              </div>
               <InputSearch
                 className="w-full"
                 value={search}
