@@ -12,6 +12,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [search, setSearch] = useState("");
   const [title, setTitle] = useState<string>("");
   const [stepper, setStepper] = useState<Steps>(Steps.Search);
@@ -21,9 +22,6 @@ export default function Home() {
 
 
   const handleSearch = async (searchValue: string) => {
-    console.log('searchValue', searchValue);
-    // debugger;
-
     if (stepper === Steps.Search) {
       setStepper(Steps.Loading);
     }
@@ -40,10 +38,6 @@ export default function Home() {
     try {
       const value = searchValue.trim();
       setSearch('');
-      console.log('value', value);
-
-      // if (!value) return;
-
       setStepper(Steps.Chat);
       setTitle("");
 
@@ -69,31 +63,15 @@ export default function Home() {
   const tagMocks = [
     {
       label: "Historia de la computación"
-      // onClick: () => {
-      //   setSearch("Historia de la computación");
-      //   handleSearch(new Event("submit"));
-      // }
     },
     {
       label: "Recetas de cocina"
-      // onClick: () => {
-      //   setSearch("Recetas de cocina");
-      //   handleSearch(new Event("submit"));
-      // }
     },
     {
       label: "Lugares turisticos de Peru"
-      // onClick: () => {
-      //   setSearch("Lugares turisticos de Peru");
-      //   handleSearch(new Event("submit"));
-      // }
     },
     {
       label: "Joe Biden"
-      // onClick: () => {
-      //   setSearch("Joe Biden");
-      //   handleSearch(new Event("submit"));
-      // }
     }
   ];
 
@@ -103,29 +81,6 @@ export default function Home() {
       <main className="bg-white flex min-h-[calc(100dvh-90px)] flex-col items-center justify-center px-4 py-7 md:px-10 md:py-0">
         <div className="w-full max-w-[1024px]">
           {stepper === Steps.Search && (
-            // <div className="flex flex-col gap-6 justify-center items-center py-28 rounded-xl">
-            //   {/* <div className="mb-5">
-            //     <h2 className="font-bold text-center text-[27px] leading-[27px] md:text-[45px] md:leading-[43px] text-neutral-900">
-            //       Donde la creatividad
-            //     </h2>
-            //     <h2 className="font-bold text-center text-[27px] leading-[27px] md:text-[45px] md:leading-[43px] text-neutral-900">
-            //       se une al conocimiento
-            //     </h2>
-            //   </div> */}
-            //     {tagMocks.map((tag, index) => (
-            //       <Button key={index} variant="tag" className="gap-2" onClick={tag.onClick}>
-            //         <b className="text-[16px]">#</b><span>{tag.label}</span>
-            //       </Button>
-            //     ))}       //   <InputSearch
-            //     className="w-full"
-            //     value={search}
-            //     onChange={({ target }) => setSearch(target.value)}
-            //     onSubmit={handleSearch}
-            //   />
-            //   {/* <div className="flex flex-wrap gap-2 lg:gap-4">
-
-            //   </div> */}
-            // </div>
             <InitialPage mocks={tagMocks} onSearch={handleSearch} />
           )}
 
@@ -144,7 +99,7 @@ export default function Home() {
 
 interface InitialPageProps {
   mocks: { label: string; onClick?: () => void }[];
-  onSearch: (search: string) => void;
+  onSearch: (searchValue: string) => Promise<void>
 }
 
 const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
@@ -153,9 +108,9 @@ const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
   return (
     <section className="w-full">
       <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
-        <div className="w-[60%]">
-          <div className="flex flex-col justify-center gap-3">
-            <h2 className="font-bold text-[30px] leading-[30px] text-center">
+        <div className="w-full md:w-[60%]">
+          <div className="flex flex-col justify-center gap-6">
+            <h2 className="font-bold text-[28px] leading-[25px] md:text-[45px] md:leading-[45px] text-center">
               Donde la creatividad
               <br />
               se une al conocimiento

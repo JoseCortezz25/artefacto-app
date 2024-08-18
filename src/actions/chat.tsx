@@ -9,7 +9,7 @@ import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { SourceType, User } from "@/lib/types";
-import WeatherCard, { WeatherGeneral, WeatherProps } from "@/components/weather-card";
+import WeatherCard, { WeatherGeneral } from "@/components/weather-card";
 
 
 export interface ServerMessage {
