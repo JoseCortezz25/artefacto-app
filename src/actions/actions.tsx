@@ -4,6 +4,7 @@ import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
+import { WeatherGeneral } from "@/components/weather-card";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -107,6 +108,22 @@ export const searchOnWikipedia = async (query: string) => {
     return error;
   }
 };
+
+export const getWeatherByCity = (city: string) =>
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}`)
+    .then(response => response.json())
+    .then(json => {
+      if (json.cod === '404' || json.cod === '400') {
+        throw new Error(json.message);
+      }
+      console.log("Weather: ", json);
+      // setData(json);
+      return json as WeatherGeneral;
+    })
+    .catch(err => {
+      console.log('Solicitud fallida', err);
+      throw new Error(err);
+    });
 
 
 // export const generateResultFromWikipedia = async (query: string) => {

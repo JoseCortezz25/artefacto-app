@@ -4,11 +4,12 @@
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { google } from '@ai-sdk/google';
 import Message from "@/components/message";
-import { generateResultModel, searchOnWikipedia } from "./actions";
+import { generateResultModel, getWeatherByCity, searchOnWikipedia } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { SourceType, User } from "@/lib/types";
+import WeatherCard, { WeatherGeneral, WeatherProps } from "@/components/weather-card";
 
 
 export interface ServerMessage {
@@ -42,6 +43,8 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
       - "Según la informacion de internet"
       - "Según la informacion que tengo"
       - "Según la información que tengo disponible"
+
+      Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por Alfonso Chavarro".
     `,
     text: ({ content, done }) => {
       if (done) {
@@ -73,14 +76,39 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
           return <Message role={User.AI} content={answer} badge={SourceType.Internet} />;
         }
+      },
+      getWeatherByCity: {
+        description: 'Usa la API de OpenWeather para obtener el clima actual de una ciudad.',
+        parameters: z.object({
+          city: z.string().describe('El nombre de la ciudad de la que el usuario desea obtener el clima.')
+        }),
+        generate: async ({ city }) => {
+          const result = await getWeatherByCity(city);
+
+          if (result) {
+
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              {
+                role: 'assistant',
+                content: `El clima en ${result.name} es de ${result.weather?.[0].description} con una temperatura de ${result.main?.temp}°C.`
+              }
+            ]);
+
+            return <WeatherCard weather={result as WeatherGeneral} />;
+          } else {
+            return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
+          }
+        }
       }
-      // searchOnWikipedia: {
-      //   description: 'Usa Wikipedia para obtener información sobre hechos historicos, historia, geografia, eventos, personas, etc que no tengas presente para responder al usuario.',
-      //   parameters: z.object({
-      //     question: z.string().describe('La pregunta que el usuario hizo al asistente.')
-      //   })
-      // }
     }
+    // searchOnWikipedia: {
+    //   description: 'Usa Wikipedia para obtener información sobre hechos historicos, historia, geografia, eventos, personas, etc que no tengas presente para responder al usuario.',
+    //   parameters: z.object({
+    //     question: z.string().describe('La pregunta que el usuario hizo al asistente.')
+    //   })
+    // }
+
   });
 
   return {
