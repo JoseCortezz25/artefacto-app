@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Steps, User } from "@/lib/types";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
+import { Brain, User2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -34,11 +35,10 @@ export default function Home() {
       toast.error("Ingrese una pregunta para buscar");
     }
 
-
     try {
       const value = searchValue.trim();
       setSearch('');
-      setStepper(Steps.Chat);
+      setStepper(Steps.Loading);
       setTitle("");
 
       setConversation((currentConversation: ClientMessage[]) => [
@@ -46,12 +46,15 @@ export default function Home() {
         { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
       ]);
 
+
       const message = await submitUserMessage(value);
 
       setConversation((currentConversation: ClientMessage[]) => [
         ...currentConversation,
         message
       ]);
+
+      setStepper(Steps.Chat);
 
     } catch (error) {
       if (stepper === Steps.Loading) {
@@ -85,14 +88,24 @@ export default function Home() {
           )}
 
           {stepper === Steps.Loading && (
-            <p>Loading...</p>
+            <section className="w-full">
+              <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
+
+                <div>
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <Brain className="size-[22px] max-w-[22pxa<Z]" />
+                  </div>
+                  <h2 className="text-[30px] font-semibold">Cargando el contenido...</h2>
+                </div>
+              </div>
+            </section>
           )}
 
           {stepper === Steps.Chat && (
             <Chat />
           )}
         </div>
-      </main>
+      </main >
     </>
   );
 }
