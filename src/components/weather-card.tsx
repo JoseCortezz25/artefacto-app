@@ -64,29 +64,34 @@ const WeatherCard = ({ weather }: WeatherProps) => {
     return Math.round(newTemp);
   };
 
+  const getCurrentTime = () => {
+    const date = new Date();
+    const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', hour12: true };
+    const formattedDate = date.toLocaleString('es-ES', options);
+    return formattedDate;
+  };
+
   return (
-    <article className="w-full border shadow-sm px-5 py-6 rounded-lg flex gap-5">
-      <div className="w-[30%]">
+    <article className="w-full max-w-[80%] bg-neutral-100/50 rounded-xl px-5 py-6 flex gap-5">
+      <div className="w-[65%]">
         <div className="mb-4">
-          <h2 className="font-bold text-[40px]">{kelvinToCelcius(weather.main!.temp)} °C</h2>
-          <h3 className="text-muted-foreground text-[18px]">{weather.name}</h3>
+          <h2 className="font-bold text-[48px] leading-[48px]">{kelvinToCelcius(weather.main!.temp)} °C</h2>
+          <h3 className="text-muted-foreground text-[18px] font-semibold">{weather.name}</h3>
         </div>
-        <div className="mb-4">
-          <p>
-            {weather.weather?.[0].main}
-          </p>
-          <p>
-            {weather.weather?.[0].description}
-          </p>
+
+        <div>
+          <p><b>Visibilidad:</b> {weather.visibility} metros</p>
+          <p><b>Humedad:</b> {weather.main!.humidity} %</p>
+          <p><b>Viento:</b> {weather.wind!.speed} m/s</p>
         </div>
       </div>
 
       <div>
-        <p><b>Sensación termica:</b> {kelvinToCelcius(weather.main!.feels_like)}</p>
-        <div className="w-full flex gap-2 mt-2">
-          <p><b>Max:</b> {kelvinToCelcius(weather.main!.temp_max)} °C</p>
-          <p><b>Min:</b> {kelvinToCelcius(weather.main!.temp_min)} °C</p>
-        </div>
+        <h3 className="text-[20px] font-bold">Clima</h3>
+        <p>{getCurrentTime()}</p>
+        <p className="capitalize">{weather.weather?.[0].description}
+        </p>
+        <p>Sensación termica de {kelvinToCelcius(weather.main!.feels_like)} °C</p>
       </div>
     </article>
   );

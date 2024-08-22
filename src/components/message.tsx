@@ -39,7 +39,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer }: M
       </div>
 
       <div className="flex flex-col items-start gap-2 w-full">
-        <div className="mt-2">
+        <div className={cn("mt-2", role === User.User && "font-bold")}>
           {content}
         </div>
 

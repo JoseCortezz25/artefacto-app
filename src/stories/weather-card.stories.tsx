@@ -78,9 +78,3 @@ export const Default: Story = {
     weather: mockWeather
   }
 };
-
-export const InputChat: Story = {
-  args: {
-    weather: mockWeather
-  }
-};

@@ -109,8 +109,13 @@ export const searchOnWikipedia = async (query: string) => {
   }
 };
 
-export const getWeatherByCity = (city: string) =>
-  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}`)
+export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
+  console.log("Getting weather by city...");
+  console.log("City: ", city);
+
+  console.log("API Key: ", process.env.OPENWEATHER_API_KEY);
+
+  return fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}`)
     .then(response => response.json())
     .then(json => {
       if (json.cod === '404' || json.cod === '400') {
@@ -124,6 +129,7 @@ export const getWeatherByCity = (city: string) =>
       console.log('Solicitud fallida', err);
       throw new Error(err);
     });
+};
 
 
 // export const generateResultFromWikipedia = async (query: string) => {
