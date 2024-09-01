@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Search } from "lucide-react";
+import { ArrowUp, Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { ChangeEventHandler, InputHTMLAttributes } from "react";
@@ -30,7 +30,7 @@ const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Sea
           {...props}
         />
       </div>
-      <div className={cn(variant === Steps.Search && "pr-6 py-6", variant === Steps.Chat && "pr-3 py-3", "h-full pl-4")}>
+      <div className={cn(variant === Steps.Search && "pr-6 py-6", variant === Steps.Chat && "pr-3 py-3", "h-full pl-4 flex")}>
         {variant === Steps.Search && (
           <button type="submit" className="size-[22px]">
             <Search className="text-neutral-800 cursor-pointer" />
@@ -39,7 +39,7 @@ const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Sea
 
         {variant === Steps.Chat && (
           <button className="bg-neutral-800 size-[52px] flex items-center justify-center rounded-full" type="submit">
-            <ArrowUpRight className="text-white cursor-pointer size-[22px]" />
+            <ArrowUp className="text-white cursor-pointer size-[22px]" />
           </button>
         )}
       </div>

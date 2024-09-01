@@ -15,7 +15,6 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
 
   // Cuando llegue un nuevo mensaje, ahcer que baje el scroll
-  // useEffect(() => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -45,8 +44,8 @@ const Chat = () => {
   };
 
   return (
-    <section className="h-[calc(90dvh-80px)] flex flex-col justify-between">
-      <div className="w-full max-h-[70dvh] flex flex-col justify-start gap-3 overflow-y-scroll no-scrollbar relative">
+    <section className="flex flex-col justify-between gap-4 pb-3 md:pb-0">
+      <div className="w-full h-[calc(100%-76px)] flex flex-col justify-start gap-3 overflow-y-scroll no-scrollbar relative">
         {conversation.map(({ display }: { display: ReactNode }, index: number) => (
           <div key={index} className="w-full">
             {display}

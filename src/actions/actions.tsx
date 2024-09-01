@@ -27,13 +27,7 @@ const googleModel = new ChatGoogleGenerativeAI({
 
 export const searchOnInternet = async (query: string) => {
   try {
-    console.log("Searching on internet...");
-    console.log("Query: ", query);
-
-
     const result = await searchInternetTool.invoke(query);
-    console.log("Result: ", result);
-
     const parsedResult = JSON.parse(result) as SearchResults[];
     return parsedResult;
   } catch (error) {
@@ -42,8 +36,6 @@ export const searchOnInternet = async (query: string) => {
 };
 
 export const generateResultModel = async (query: string) => {
-  console.group("generateResultModel");
-  console.log("Generating result model...");
 
   const promptTemplate = PromptTemplate.fromTemplate(`
     Actua como un asistente personal para ayudarte a encontrar información en internet.
@@ -64,9 +56,6 @@ export const generateResultModel = async (query: string) => {
     query: query,
     searchResults: await searchInternetTool.invoke(query)
   });
-
-  console.log("Result: ", result);
-  console.groupEnd();
   return result.content as string;
 };
 
@@ -95,14 +84,7 @@ export const generateTitle = async (content: string) => {
 
 export const searchOnWikipedia = async (query: string) => {
   try {
-    console.group("searchOnWikipedia");
-    console.log("Searching on Wikipedia...");
-    console.log("Query: ", query);
-
     const result = await wikipediaTool.invoke(query);
-    console.log("Result: ", result);
-    console.groupEnd();
-
     return result;
   } catch (error) {
     return error;
@@ -110,53 +92,16 @@ export const searchOnWikipedia = async (query: string) => {
 };
 
 export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
-  console.log("Getting weather by city...");
-  console.log("City: ", city);
-
-  console.log("API Key: ", process.env.OPENWEATHER_API_KEY);
-
   return fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}`)
     .then(response => response.json())
     .then(json => {
       if (json.cod === '404' || json.cod === '400') {
         throw new Error(json.message);
       }
-      console.log("Weather: ", json);
-      // setData(json);
       return json as WeatherGeneral;
     })
     .catch(err => {
-      console.log('Solicitud fallida', err);
       throw new Error(err);
     });
 };
 
-
-// export const generateResultFromWikipedia = async (query: string) => {
-//   console.group("generateResultModel");
-//   console.log("Generating result model...");
-
-//   const promptTemplate = PromptTemplate.fromTemplate(`
-//     Actua como un asistente personal para ayudarte a encontrar información en internet.
-//     El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
-//     Este es el resultado de la busqueda: {searchResults}
-//     Esta es la pregunta del usuario: {query}  
-
-//     Evita decir estas frases en tu respuesta:
-//     - "Según la información disponible en línea"
-//     - "Según la informacion de internet"
-//     - "Según la informacion que tengo"
-//     - "Según la información que tengo disponible"
-//   `);
-
-//   const chain = promptTemplate.pipe(googleModel);
-
-//   const result = await chain.invoke({
-//     query: query,
-//     searchResults: await 
-//   });
-
-//   console.log("Result: ", result);
-//   console.groupEnd();
-//   return result.content as string;
-// };

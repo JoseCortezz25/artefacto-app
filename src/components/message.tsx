@@ -1,17 +1,21 @@
 "use client";
-import { Brain, CopyIcon, PencilIcon, User2 } from "lucide-react";
+import { Brain, CopyIcon, User2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { SourceType, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Preview } from "./preview-markdown";
+import { ReactNode } from "react";
 
 interface MessageProps {
   role: User;
   content: string;
   badge?: SourceType
+  isComponent?: boolean;
+  children?: ReactNode;
 };
 
-const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer }: MessageProps) => {
+const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isComponent = false, children }: MessageProps) => {
   const onCopy = async () => {
     if (!content) return;
     await navigator.clipboard.writeText(content);
@@ -38,40 +42,41 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer }: M
         )}
       </div>
 
-      <div className="flex flex-col items-start gap-2 w-full">
-        <div className={cn("mt-2", role === User.User && "font-bold")}>
-          {content}
-        </div>
-
-        {badge === SourceType.Internet && (
-          <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
-            Internet
-          </span>
-        )}
-
-        {badge === SourceType.Wikipedia && (
-          <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
-            Wikipedia
-          </span>
-        )}
-
-        {role === User.AI && (
-          <div className="flex justify-end w-full mt-2">
-            <div className="flex gap-2 justify-between">
-              <nav className="flex gap-2">
-                <Button variant="ghost" onClick={onCopy}>
-                  <CopyIcon className="size-[16px] mr-2" />
-                  Copy answer
-                </Button>
-                <Button variant="ghost">
-                  <PencilIcon className="size-[16px] mr-2" />
-                  Rewrite
-                </Button>
-              </nav>
-            </div>
+      {!isComponent ? (
+        <div className="flex flex-col items-start gap-2 w-full">
+          <div className={cn("mt-2", role === User.User && "font-bold")}>
+            <Preview markdown={content}></Preview>
           </div>
-        )}
-      </div>
+
+          {badge === SourceType.Internet && (
+            <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+              Internet
+            </span>
+          )}
+
+          {badge === SourceType.Wikipedia && (
+            <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+              Wikipedia
+            </span>
+          )}
+
+          {role === User.AI && (
+            <div className="flex justify-end w-full mt-2">
+              <div className="flex gap-2 justify-between">
+                <nav className="flex gap-2">
+                  <Button variant="ghost" onClick={onCopy}>
+                    <CopyIcon className="size-[16px] mr-2" />
+                    Copy answer
+                  </Button>
+                </nav>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        children
+      )}
+
 
     </article>
   );

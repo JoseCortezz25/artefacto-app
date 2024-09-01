@@ -1,15 +1,14 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { AIState, DELTA_STATUS, SourceType, UIState, User } from "@/lib/types";
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { google } from '@ai-sdk/google';
 import Message from "@/components/message";
-import { generateResultModel, getWeatherByCity, searchOnWikipedia } from "./actions";
+import { generateResultModel, getWeatherByCity } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { SourceType, User } from "@/lib/types";
-import WeatherCard, { WeatherGeneral } from "@/components/weather-card";
+import WeatherCard from "@/components/weather-card";
 
 
 export interface ServerMessage {
@@ -27,8 +26,6 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
   'use server';
 
   const history = getMutableAIState();
-
-  console.log("history", history.get());
 
   const result = await streamUI({
     model: google('models/gemini-1.5-pro-latest'),
@@ -95,20 +92,15 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
               }
             ]);
 
-            return <WeatherCard weather={result as WeatherGeneral} />;
+            return <Message role={User.AI} isComponent={true} content="">
+              <WeatherCard weather={result} />
+            </Message>;
           } else {
             return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
           }
         }
       }
     }
-    // searchOnWikipedia: {
-    //   description: 'Usa Wikipedia para obtener información sobre hechos historicos, historia, geografia, eventos, personas, etc que no tengas presente para responder al usuario.',
-    //   parameters: z.object({
-    //     question: z.string().describe('La pregunta que el usuario hizo al asistente.')
-    //   })
-    // }
-
   });
 
   return {

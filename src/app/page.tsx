@@ -2,13 +2,13 @@
 import { ClientMessage } from "@/actions/chat";
 import Chat from "@/components/chat";
 import Header from "@/components/header";
+import Loader from "@/components/loader";
 import Message from "@/components/message";
 import InputSearch from "@/components/search";
 import { Button } from "@/components/ui/button";
 import { Steps, User } from "@/lib/types";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { Brain, User2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -20,7 +20,6 @@ export default function Home() {
   const { submitUserMessage } = useActions();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setConversation] = useUIState();
-
 
   const handleSearch = async (searchValue: string) => {
     if (stepper === Steps.Search) {
@@ -81,21 +80,22 @@ export default function Home() {
   return (
     <>
       <Header title={title} />
-      <main className="bg-white flex min-h-[calc(100dvh-90px)] flex-col items-center justify-center px-4 py-7 md:px-10 md:py-0">
-        <div className="w-full max-w-[1024px]">
+      <main className="bg-white flex min-h-[calc(100dvh-72px)] sm:min-h-[calc(100dvh-90px)] flex-col items-center justify-center  px-4 py-0 sm:py-7 md:px-10 md:py-0">
+        <div className="w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center">
           {stepper === Steps.Search && (
             <InitialPage mocks={tagMocks} onSearch={handleSearch} />
           )}
 
           {stepper === Steps.Loading && (
             <section className="w-full">
-              <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
-
-                <div>
-                  <div className="bg-blue-100 p-2 rounded-full">
-                    <Brain className="size-[22px] max-w-[22pxa<Z]" />
+              <div className=" mx-auto flex flex-col items-center justify-center h-[80dvh]">
+                <div className="flex flex-col items-center justify-center max-w-[610px]">
+                  <div className="mb-6">
+                    <Loader />
                   </div>
-                  <h2 className="text-[30px] font-semibold">Cargando el contenido...</h2>
+                  <h2 className="text-[30px] leading-[36px] text-center font-medium">
+                    Buscando en el rincón más profundo de la web para responderte...🚀
+                  </h2>
                 </div>
               </div>
             </section>
@@ -123,12 +123,12 @@ const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
       <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
         <div className="w-full md:w-[60%]">
           <div className="flex flex-col justify-center gap-6">
-            <h2 className="font-bold text-[28px] leading-[25px] md:text-[45px] md:leading-[45px] text-center">
+            <h2 className="font-bold text-[28px] leading-[22px] md:text-[40px] md:leading-[45px] text-center">
               Donde la creatividad
               <br />
               se une al conocimiento
             </h2>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-muted-foreground font-medium text-center">
               Eligue alguna de las siguientes opciones para comenzar o pregunta algo.
             </p>
           </div>
