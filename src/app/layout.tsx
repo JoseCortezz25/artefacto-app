@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.scss";
 import { AI } from "@/actions/chat";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -19,12 +20,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <AI>
-          <main>
-            {children}
-          </main>
-          <Toaster richColors />
-        </AI>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AI>
+
+            <main>
+              {children}
+            </main>
+            <Toaster richColors />
+          </AI>
+        </ThemeProvider>
       </body>
     </html>
   );

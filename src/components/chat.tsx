@@ -13,10 +13,18 @@ const Chat = () => {
   const [conversation, setConversation] = useUIState();
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const [autoScroll, setAutoScroll] = useState(true);
 
-  // Cuando llegue un nuevo mensaje, ahcer que baje el scroll
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (autoScroll) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleScroll = (e) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    const atBottom = scrollHeight - scrollTop === clientHeight;
+    setAutoScroll(atBottom);
   };
 
   useEffect(scrollToBottom, [conversation]);
@@ -44,13 +52,12 @@ const Chat = () => {
   };
 
   return (
-    <section className="flex flex-col justify-between gap-4 pb-3 md:pb-0">
-      <div className="w-full h-[calc(100%-76px)] flex flex-col justify-start gap-3 overflow-y-scroll no-scrollbar relative">
-        {conversation.map(({ display }: { display: ReactNode }, index: number) => (
-          <div key={index} className="w-full">
-            {display}
-          </div>
-        ))}
+    <section className="flex flex-col justify-between gap-4 pb-3 w-full">
+      <div onScroll={handleScroll} className="w-full h-[calc(100%-76px)] flex flex-col justify-start gap-3 overflow-y-scroll no-scrollbar relative">        {conversation.map(({ display }: { display: ReactNode }, index: number) => (
+        <div key={index} className="w-full">
+          {display}
+        </div>
+      ))}
         {loading && <div className="w-full flex justify-center">
           <span className="bg-black text-white inline rounded-full py-1.5 px-4 mt-5 font-bold">
             AI esta pensando...
@@ -60,13 +67,16 @@ const Chat = () => {
 
       </div>
 
-      <InputSearch
-        className="w-full"
-        value={search}
-        onChange={({ target }) => setSearch(target.value)}
-        onSubmit={handleSearch}
-        variant={Steps.Chat}
-      />
+      <div>
+        <InputSearch
+          className="w-full"
+          value={search}
+          onChange={({ target }) => setSearch(target.value)}
+          onSubmit={handleSearch}
+          variant={Steps.Chat}
+        />
+        <p className="mt-2 text-[15px] text-center text-muted-foreground">Artefacto puede cometer errores. Comprueba la información importante.</p>
+      </div>
     </section>
   );
 };

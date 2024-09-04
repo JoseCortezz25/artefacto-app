@@ -70,7 +70,7 @@ const getCurrentTime = () => {
 export default function WeatherCard({ weather }: WeatherProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto overflow-hidden">
-      <div className="bg-gradient-to-br from-blue-400 to-blue-600 p-6 text-white">
+      <div className="bg-gradient-to-br from-blue-400 to-blue-600 p-6 text-white dark:from-blue-500 dark:to-blue-700">
         <div className="flex flex-col gap-3 md:gap-0 md:flex-row justify-between items-center">
           <h2 className="text-xl font-bold">Clima Actual en {weather.name}</h2>
           <div className="flex items-center gap-2">
@@ -101,19 +101,19 @@ export default function WeatherCard({ weather }: WeatherProps) {
           </div>
         </div>
       </div>
-      <CardContent className="flex flex-col md:grid grid-cols-2 gap-8 p-6 bg-gradient-to-b from-blue-100 to-white">
+      <CardContent className="flex flex-col md:grid grid-cols-2 gap-8 p-6 bg-gradient-to-b from-blue-100 to-white dark:bg-[#2f2f2f]  dark:from-neutral-900 dark:to-neutral-800">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <Eye className="h-6 w-6 text-blue-600" />
             <div>
-              <p className="text-sm text-gray-600">Visibilidad</p>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Visibilidad</p>
               <p className="text-xl font-semibold">{weather.visibility / 1000} km</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Droplets className="h-6 w-6 text-blue-600" />
             <div>
-              <p className="text-sm text-gray-600">Humedad</p>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Humedad</p>
               <p className="text-xl font-semibold">{weather.main.humidity}%</p>
             </div>
           </div>
@@ -122,14 +122,14 @@ export default function WeatherCard({ weather }: WeatherProps) {
           <div className="flex items-center gap-3">
             <Wind className="h-6 w-6 text-blue-600" />
             <div>
-              <p className="text-sm text-gray-600">Viento</p>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Viento</p>
               <p className="text-xl font-semibold">{weather.wind.speed} m/s</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Thermometer className="h-6 w-6 text-blue-600" />
             <div>
-              <p className="text-sm text-gray-600">Temperatura Maxima</p>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Temperatura Maxima</p>
               <p className="text-xl font-semibold">{kelvinToCelsius(weather.main?.temp_max)}°C</p>
             </div>
           </div>

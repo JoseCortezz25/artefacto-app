@@ -25,18 +25,18 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
   return (
     <article className={cn(
       "flex gap-4 rounded-[25px] py-5 pl-7 pr-4 w-full max-w-[100%] md:max-w-[85%]",
-      role === User.AI && "bg-blue-100/30",
-      role === User.User && "bg-gray-100/10"
+      role === User.AI && "bg-blue-100/30 dark:bg-blue-500",
+      role === User.User && "bg-gray-100/10 dark:bg-[#2f2f2f]"
     )}>
       <div>
         {role === User.AI && (
-          <div className="bg-blue-100 p-2 rounded-full">
+          <div className="bg-blue-100 dark:bg-blue-600 p-2 rounded-full">
             <Brain className="size-[22px]" />
           </div>
         )}
 
         {role === User.User && (
-          <div className="bg-gray-200/80 p-2 rounded-full">
+          <div className="bg-gray-200/80 dark:bg-[#1d1d1d] p-2 rounded-full">
             <User2 className="size-[22px]" />
           </div>
         )}
@@ -66,7 +66,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
                 <nav className="flex gap-2">
                   <Button variant="ghost" onClick={onCopy}>
                     <CopyIcon className="size-[16px] mr-2" />
-                    Copy answer
+                    Copiar respuesta
                   </Button>
                 </nav>
               </div>
@@ -76,8 +76,6 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
       ) : (
         children
       )}
-
-
     </article>
   );
 };

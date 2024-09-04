@@ -18,13 +18,13 @@ const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Sea
   return (
     <form
       onSubmit={onSubmit}
-      className={cn("pl-4 bg-neutral-200/30 w-full flex gap-5 justify-between items-center rounded-full transition-all duration-200", className)}
+      className={cn("pl-4 bg-neutral-200/30 dark:bg-[#2f2f2f] dark:text-white w-full flex gap-5 justify-between items-center rounded-full transition-all duration-200", className)}
       role="search"
     >
       <div className="flex-grow">
         <Input
           placeholder="¿Qué deseas buscar?"
-          className="font-medium text-neutral-800 placeholder:text-neutral-800 min-w-[250px] border-none bg-transparent ring-0 outline-none active:border-none active:outline-none active:ring-0 active:border-transparent focus:border-transparent focus:outline-none focus:rounded-none focus:shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-none focus-visible:outline-none focus-visible:shadow-none"
+          className="font-medium text-neutral-800 dark:text-white dark:placeholder:text-[#ececec] placeholder:text-neutral-800 min-w-[250px] border-none bg-transparent ring-0 outline-none active:border-none active:outline-none active:ring-0 active:border-transparent focus:border-transparent focus:outline-none focus:rounded-none focus:shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-none focus-visible:outline-none focus-visible:shadow-none"
           onChange={onChange}
           value={value}
           {...props}
@@ -33,13 +33,13 @@ const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Sea
       <div className={cn(variant === Steps.Search && "pr-6 py-6", variant === Steps.Chat && "pr-3 py-3", "h-full pl-4 flex")}>
         {variant === Steps.Search && (
           <button type="submit" className="size-[22px]">
-            <Search className="text-neutral-800 cursor-pointer" />
+            <Search className="text-neutral-800 dark:text-[#ececec] cursor-pointer" />
           </button>
         )}
 
         {variant === Steps.Chat && (
-          <button className="bg-neutral-800 size-[52px] flex items-center justify-center rounded-full" type="submit">
-            <ArrowUp className="text-white cursor-pointer size-[22px]" />
+          <button className="bg-neutral-800 dark:bg-white size-[52px] flex items-center justify-center rounded-full" type="submit">
+            <ArrowUp className="text-white dark:text-[#2f2f2f] cursor-pointer size-[28px]" />
           </button>
         )}
       </div>

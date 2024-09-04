@@ -7,6 +7,7 @@ import Message from "@/components/message";
 import InputSearch from "@/components/search";
 import { Button } from "@/components/ui/button";
 import { Steps, User } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
 import { useState } from "react";
@@ -80,8 +81,8 @@ export default function Home() {
   return (
     <>
       <Header title={title} />
-      <main className="bg-white flex min-h-[calc(100dvh-72px)] sm:min-h-[calc(100dvh-90px)] flex-col items-center justify-center  px-4 py-0 sm:py-7 md:px-10 md:py-0">
-        <div className="w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center">
+      <main className="flex min-h-[calc(100dvh-72px)] sm:min-h-[calc(100dvh-90px)] flex-col items-center justify-center  px-4 py-0 sm:py-7 md:px-10 md:py-0">
+        <div className={cn("w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center")}>
           {stepper === Steps.Search && (
             <InitialPage mocks={tagMocks} onSearch={handleSearch} />
           )}
@@ -119,9 +120,9 @@ const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
   const [search, setSearch] = useState("");
 
   return (
-    <section className="w-full">
+    <section className="w-full h-full flex flex-col justify-center">
       <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
-        <div className="w-full md:w-[60%]">
+        <div className="w-full md:w-[62%]">
           <div className="flex flex-col justify-center gap-6">
             <h2 className="font-bold text-[28px] leading-[22px] md:text-[40px] md:leading-[45px] text-center">
               Donde la creatividad
