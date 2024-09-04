@@ -12,7 +12,7 @@ const Chat = () => {
   const { submitUserMessage } = useActions();
   const [conversation, setConversation] = useUIState();
   const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
   const scrollToBottom = () => {
@@ -21,9 +21,9 @@ const Chat = () => {
     }
   };
 
-  const handleScroll = (e) => {
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-    const atBottom = scrollHeight - scrollTop === clientHeight;
+    const atBottom: boolean = scrollHeight - scrollTop === clientHeight;
     setAutoScroll(atBottom);
   };
 
