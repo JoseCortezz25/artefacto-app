@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -10,6 +13,24 @@ import {
 } from "./ui/select";
 
 const SheetSettings = () => {
+  const [apiKey, setApiKey] = useState("");
+  const [model, setModel] = useState("");
+  const [creativity, setCreativity] = useState("");
+
+  const onSaveSettings = () => {
+    console.log({ apiKey, model, creativity });
+
+    if (!localStorage.getItem("apiKey")) {
+      localStorage.setItem("apiKey", apiKey);
+    }
+    if (!localStorage.getItem("model")) {
+      localStorage.setItem("model", model);
+    }
+    if (!localStorage.getItem("creativity")) {
+      localStorage.setItem("creativity", creativity);
+    }
+  };
+
   return (
     <section className="!mt-[30px]">
 
@@ -18,7 +39,7 @@ const SheetSettings = () => {
         <p>
           Elige el modelo de IA que deseas utilizar para la generación de la respuesta.
         </p>
-        <Select>
+        <Select onValueChange={(e) => setModel(e)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar el modelo" />
           </SelectTrigger>
@@ -36,7 +57,7 @@ const SheetSettings = () => {
         <p>
           Moldea la creatividad de la respuesta. Un nivel bajo generará respuestas más predecibles, mientras que un nivel alto generará respuestas más inesperadas.
         </p>
-        <Select>
+        <Select onValueChange={(e) => setCreativity(e)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar el nivel de creatividad" />
           </SelectTrigger>
@@ -54,10 +75,10 @@ const SheetSettings = () => {
         <p>
           Ingresa tu clave de API para poder utilizar los servicios del modelo que seleccionaste.
         </p>
-        <Input type="text" />
+        <Input type="text" onChange={(e) => setApiKey(e.target.value)} />
       </div>
 
-      <Button className="w-full">
+      <Button className="w-full" onClick={onSaveSettings}>
         Guardar configuración
       </Button>
     </section>

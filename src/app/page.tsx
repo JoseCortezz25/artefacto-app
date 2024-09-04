@@ -65,16 +65,20 @@ export default function Home() {
 
   const tagMocks = [
     {
-      label: "Historia de la computación"
+      label: "Historia de la computación",
+      onClick: () => handleSearch("Historia de la computación")
     },
     {
-      label: "Recetas de cocina"
+      label: "Recetas de cocina",
+      onClick: () => handleSearch("Recetas de cocina")
     },
     {
-      label: "Lugares turisticos de Peru"
+      label: "Lugares turisticos de Peru",
+      onClick: () => handleSearch("Lugares turisticos de Peru")
     },
     {
-      label: "Joe Biden"
+      label: "Datos curiosos de animales",
+      onClick: () => handleSearch("Datos curiosos de animales")
     }
   ];
 
