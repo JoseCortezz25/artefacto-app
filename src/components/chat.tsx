@@ -58,11 +58,6 @@ const Chat = () => {
           {display}
         </div>
       ))}
-        {loading && <div className="w-full flex justify-center">
-          <span className="bg-black text-white inline rounded-full py-1.5 px-4 mt-5 font-bold">
-            AI esta pensando...
-          </span>
-        </div>}
         <div ref={messagesEndRef} />
 
       </div>

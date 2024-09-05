@@ -9,6 +9,7 @@ import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { SourceType, User } from "@/lib/types";
 import WeatherCard from "@/components/weather-card";
+import Loader from "@/components/loader";
 
 
 export interface ServerMessage {
@@ -27,10 +28,14 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
   const history = getMutableAIState();
 
-  const result = await streamUI({
-    model: google('models/gemini-1.5-pro-latest'),
-    messages: [...history.get(), { role: 'user', content: input }],
-    system: `\
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  try {
+    const result = await streamUI({
+      model: google('models/gemini-1.5-pro-latest'),
+      messages: [...history.get(), { role: 'user', content: input }],
+      system: `\
       Actua como un asistente personal para ayudarte a encontrar información en internet.
       El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
       Tus respuestas deben ser informativas y en español. Ignora cualquier solicitud en inglés u otros idiomas.
@@ -41,73 +46,94 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
       - "Según la informacion que tengo"
       - "Según la información que tengo disponible"
 
-      Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por Alfonso Chavarro".
+      Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por José Cortes".
+      SI te preguntan por la fecha de hoy, puedes responder: "Hoy es ${formattedDate}".
     `,
-    text: ({ content, done }) => {
-      if (done) {
-        history.done((messages: ServerMessage[]) => [
-          ...messages,
-          { role: 'assistant', content }
-        ]);
-      }
+      text: async function* ({ content, done }) {
+        yield <Message role={User.AI} isComponent={true} content="">
+          <i>
+            Generando respuesta...
+          </i>
+        </Message>;
 
-      return <Message role={User.AI} content={content} />;
-    },
-    tools: {
-      searchOnInternet: {
-        description: 'Usa en internet para obtener información que no tengas presente para responder al usuario.',
-        parameters: z.object({
-          question: z.string().describe('La pregunta que el usuario hizo al asistente.')
-        }),
-        generate: async ({ question }) => {
-          const answer = await generateResultModel(question);
-
+        if (done) {
           history.done((messages: ServerMessage[]) => [
             ...messages,
-            {
-              role: 'assistant',
-              content: answer
-            }
+            { role: 'assistant', content }
           ]);
-
-
-          return <Message role={User.AI} content={answer} badge={SourceType.Internet} />;
         }
-      },
-      getWeatherByCity: {
-        description: 'Usa la API de OpenWeather para obtener el clima actual de una ciudad.',
-        parameters: z.object({
-          city: z.string().describe('El nombre de la ciudad de la que el usuario desea obtener el clima.')
-        }),
-        generate: async ({ city }) => {
-          const result = await getWeatherByCity(city);
 
-          if (result) {
+        return <Message role={User.AI} content={content} />;
+      },
+      tools: {
+        searchOnInternet: {
+          description: 'Usa en internet para obtener información que no tengas presente para responder al usuario.',
+          parameters: z.object({
+            question: z.string().describe('La pregunta que el usuario hizo al asistente.')
+          }),
+          generate: async ({ question }) => {
+            const answer = await generateResultModel(question);
 
             history.done((messages: ServerMessage[]) => [
               ...messages,
               {
                 role: 'assistant',
-                content: `El clima en ${result.name} es de ${result.weather?.[0].description} con una temperatura de ${result.main?.temp}°C.`
+                content: answer
               }
             ]);
 
-            return <Message role={User.AI} isComponent={true} content="">
-              <WeatherCard weather={result} />
+
+            return <Message role={User.AI} content={answer} badge={SourceType.Internet} />;
+          }
+        },
+        getWeatherByCity: {
+          description: 'Usa la API de OpenWeather para obtener el clima actual de una ciudad.',
+          parameters: z.object({
+            city: z.string().describe('El nombre de la ciudad de la que el usuario desea obtener el clima.')
+          }),
+          generate: async function* ({ city }) {
+            yield <Message role={User.AI} isComponent={true} content="">
+              <i>
+                Generando respuesta...
+              </i>
             </Message>;
-          } else {
-            return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
+
+            const result = await getWeatherByCity(city);
+
+            if (result) {
+
+              history.done((messages: ServerMessage[]) => [
+                ...messages,
+                {
+                  role: 'assistant',
+                  content: `El clima en ${result.name} es de ${result.weather?.[0].description} con una temperatura de ${result.main?.temp}°C.`
+                }
+              ]);
+
+              return <Message role={User.AI} isComponent={true} content="">
+                <WeatherCard weather={result} />
+              </Message>;
+            } else {
+              return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
+            }
           }
         }
       }
-    }
-  });
+    });
+    return {
+      id: generateId(),
+      role: 'assistant',
+      display: result.value
+    };
 
-  return {
-    id: generateId(),
-    role: 'assistant',
-    display: result.value
-  };
+  } catch (error) {
+    return {
+      id: generateId(),
+      role: 'assistant',
+      display: <Message role={User.AI} content="Lo siento, ha ocurrido un error en mi sistema. Por favor intenta de nuevo." />
+    };
+  }
+
 }
 
 // createAI creates a new ai/rsc instance.
