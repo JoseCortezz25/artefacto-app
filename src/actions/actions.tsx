@@ -5,6 +5,10 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { WeatherGeneral } from "@/components/weather-card";
+import { z } from "zod";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { StructuredOutputParser } from "langchain/output_parsers";
+
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -56,6 +60,7 @@ export const generateResultModel = async (query: string) => {
     query: query,
     searchResults: await searchInternetTool.invoke(query)
   });
+
   return result.content as string;
 };
 
@@ -105,3 +110,37 @@ export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
     });
 };
 
+// Generate a recipe based on a query from user
+export const generateRecipe = async (query: string) => {
+
+  // We can use zod to define a schema for the output using the `fromZodSchema` method of `StructuredOutputParser`.
+  const parser = StructuredOutputParser.fromZodSchema(
+    z.object({
+      title: z.string(),
+      ingredients: z.array(z.string()),
+      instructions: z.array(z.string()),
+      duration: z.string()
+    })
+  );
+
+  const chain = RunnableSequence.from([
+    PromptTemplate.fromTemplate(`
+    Actua como un chef con 10 años de experiencia.Tu misión es generar una receta de acuerdo a la consulta del usuario.
+    En internet buscarás una receta que se ajuste a la consulta del usuario y la presentarás de manera estructurada.
+    Solucitud del usuario: {query}
+    Este es el resultado de la busqueda: {searchResults}
+    Estructura de la receta: {formatInstructions}
+    La respuesta debe ser en español.
+    `),
+    googleModel,
+    parser
+  ]);
+
+  const response = await chain.invoke({
+    query: query,
+    searchResults: await searchInternetTool.invoke(query),
+    formatInstructions: parser.getFormatInstructions()
+  });
+
+  return response;
+};

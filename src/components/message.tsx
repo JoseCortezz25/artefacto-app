@@ -49,8 +49,8 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
           </div>
 
           {badge === SourceType.Internet && (
-            <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
-              Internet
+            <span className="whitespace-nowrap rounded-full bg-blue-100 dark:bg-blue-200 px-2.5 py-0.5 text-sm text-blue-800 dark:text-blue-800 font-medium">
+              Generado con información de internet
             </span>
           )}
 

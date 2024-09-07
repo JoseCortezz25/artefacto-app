@@ -3,13 +3,14 @@
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { google } from '@ai-sdk/google';
 import Message from "@/components/message";
-import { generateResultModel, getWeatherByCity } from "./actions";
+import { generateRecipe, generateResultModel, getWeatherByCity } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { SourceType, User } from "@/lib/types";
 import WeatherCard from "@/components/weather-card";
 import Loader from "@/components/loader";
+import RecipeCard from "@/components/recipe-card";
 
 
 export interface ServerMessage {
@@ -49,13 +50,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
       Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por José Cortes".
       SI te preguntan por la fecha de hoy, puedes responder: "Hoy es ${formattedDate}".
     `,
-      text: async function* ({ content, done }) {
-        yield <Message role={User.AI} isComponent={true} content="">
-          <i>
-            Generando respuesta...
-          </i>
-        </Message>;
-
+      text: function ({ content, done }) {
         if (done) {
           history.done((messages: ServerMessage[]) => [
             ...messages,
@@ -117,6 +112,42 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
               return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
             }
           }
+        },
+        generateRecipeFromUserInput: {
+          description: 'Genera una receta de cocina a partir de la entrada del usuario.',
+          parameters: z.object({
+            query: z.string().describe('La entrada del usuario que se utilizará para generar la receta.')
+          }),
+          generate: async function* ({ query }) {
+            yield <Message role={User.AI} isComponent={true} content="">
+              <i>
+                Generando receta...
+              </i>
+            </Message>;
+
+            const result = await generateRecipe(query);
+
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              {
+                role: 'assistant',
+                content: `Aquí tienes una receta de ${query}.
+                ${result.title}
+                Duración: ${result.duration}
+                
+                Ingredientes:
+                ${result.ingredients.join('\n')}
+                
+                Instrucciones:
+                ${result.instructions.join('\n')}
+                `
+              }
+            ]);
+
+            return <Message role={User.AI} content="" isComponent={true}>
+              <RecipeCard recipe={result} />
+            </Message>;
+          }
         }
       }
     });
@@ -127,6 +158,8 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
     };
 
   } catch (error) {
+    console.log('error:', error);
+
     return {
       id: generateId(),
       role: 'assistant',

@@ -69,16 +69,16 @@ export default function Home() {
       onClick: () => handleSearch("Historia de la computación")
     },
     {
-      label: "Recetas de cocina",
-      onClick: () => handleSearch("Recetas de cocina")
+      label: "Investigación reciente sobre la longevidad",
+      onClick: () => handleSearch("Investigación reciente sobre la longevidad")
     },
     {
-      label: "Lugares turisticos de Peru",
-      onClick: () => handleSearch("Lugares turisticos de Peru")
+      label: "¿Cuál es el clima en Lima?",
+      onClick: () => handleSearch("¿Cuál es el clima en Lima?")
     },
     {
-      label: "Datos curiosos de animales",
-      onClick: () => handleSearch("Datos curiosos de animales")
+      label: "Receta de pizza de pepperoni",
+      onClick: () => handleSearch("Receta de pizza de pepperoni")
     }
   ];
 
