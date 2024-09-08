@@ -199,8 +199,6 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
     };
 
   } catch (error) {
-    console.log('ERROR:', error);
-
     return {
       id: generateId(),
       role: 'assistant',
