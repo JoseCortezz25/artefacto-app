@@ -42,16 +42,12 @@ const Chat = () => {
       ...currentConversation,
       { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
     ]);
-    debugger;
 
     const config: ModelConfig = {
       model: localStorage.getItem('model') as Models,
       creativity: localStorage.getItem('creativity') as Creativity,
       apiKey: localStorage.getItem('apiKey') as string
     };
-
-
-    console.log('CONFIG:', config);
 
     const message = await submitUserMessage(value, config);
 
