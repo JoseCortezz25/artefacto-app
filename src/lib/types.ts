@@ -50,7 +50,8 @@ export enum Creativity {
 export enum Models {
   GPT4o = 'gpt-4o',
   GPT4oMini = 'gpt-4o-mini',
-  Gemini15ProLatest = 'gemini-1.5-pro-latest'
+  Gemini15ProLatest = 'gemini-1.5-pro-latest',
+  GeminiFlash15 = 'gemini-1.5-flash-latest',
 }
 
 export interface Options {

@@ -1,7 +1,9 @@
+import { Github } from "./icons";
 import SheetSettings from "./sheet-settings";
 import { ModeToggle } from "./toggle-mode";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { SettingsIcon } from "lucide-react";
 
@@ -35,9 +37,16 @@ const Header = ({ title }: HeaderProps) => {
                 <SheetDescription className="text-[15px]">
                   Configura el modelo y la API KEY para generar la busqueda.
                 </SheetDescription>
-
-                <SheetSettings />
               </SheetHeader>
+              <div className="w-full h-[calc(100dvh-81.5px-48px)] flex flex-col justify-between">
+                <SheetSettings />
+
+                <p className="text-center text-muted-foreground text-[14px]">Creado por {' '}
+                  <a href="https://github.com/JoseCortezz25" target="_blank" rel="noopener noreferrer">
+                    <strong>@JoseCortezz25</strong>
+                  </a>
+                </p>
+              </div>
             </SheetContent>
           </Sheet>
 

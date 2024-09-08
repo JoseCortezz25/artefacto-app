@@ -46,6 +46,8 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
           return openai('gpt-4o-mini');
         case Models.Gemini15ProLatest:
           return google('models/gemini-1.5-pro-latest');
+        case Models.GeminiFlash15:
+          return google('models/gemini-1.5-flash-latest');
         default:
           return google('models/gemini-1.5-pro-latest');
       }
