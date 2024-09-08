@@ -110,10 +110,7 @@ export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
     });
 };
 
-// Generate a recipe based on a query from user
 export const generateRecipe = async (query: string) => {
-
-  // We can use zod to define a schema for the output using the `fromZodSchema` method of `StructuredOutputParser`.
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       title: z.string(),
