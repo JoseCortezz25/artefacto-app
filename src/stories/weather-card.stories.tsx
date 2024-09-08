@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Steps } from "@/lib/types";
 import { Meta, StoryObj } from "@storybook/react";
 import WeatherCard, { WeatherGeneral } from "@/components/weather-card";
@@ -48,7 +49,9 @@ const mockWeather: WeatherGeneral = {
     temp_min: 280.15,
     temp_max: 283.71,
     pressure: 1016,
-    humidity: 53
+    humidity: 53,
+    sea_level: 0,
+    grnd_level: 0
   },
   visibility: 16093,
   wind: {
@@ -62,7 +65,6 @@ const mockWeather: WeatherGeneral = {
   sys: {
     type: 1,
     id: 5122,
-    message: 0.0139,
     country: "US",
     sunrise: 1560343627,
     sunset: 1560396563

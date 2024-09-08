@@ -2,7 +2,7 @@
 import { Creativity, Models, SearchResults } from "@/lib/types";
 import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ChatOpenAI, ChatOpenAICallOptions, OpenAI, OpenAICallOptions } from "@langchain/openai";
+import { ChatOpenAI, ChatOpenAICallOptions, OpenAICallOptions } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { WeatherGeneral } from "@/components/weather-card";
