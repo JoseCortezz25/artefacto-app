@@ -23,7 +23,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
       </div>
       <CardContent className="flex flex-col lg:grid md:grid-cols-2 gap-6 p-6">
-        <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 shadow-inner">
+        <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 shadow-inner h-fit">
           <h3 className="text-xl font-semibold mb-4 flex items-center text-blue-700 dark:text-blue-50">
             <Utensils className="mr-2 h-5 w-5" />
             Ingredientes

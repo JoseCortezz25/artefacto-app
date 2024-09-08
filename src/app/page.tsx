@@ -79,6 +79,10 @@ export default function Home() {
     {
       label: "Receta de pizza de pepperoni",
       onClick: () => handleSearch("Receta de pizza de pepperoni")
+    },
+    {
+      label: "Dame un ejemplo de código Python",
+      onClick: () => handleSearch("Dame un ejemplo de código Python")
     }
   ];
 
@@ -126,8 +130,8 @@ const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
   return (
     <section className="w-full h-full flex flex-col justify-center">
       <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
-        <div className="w-full md:w-[62%]">
-          <div className="flex flex-col justify-center gap-6">
+        <div className="flex items-center flex-col">
+          <div className="flex flex-col justify-center gap-6 w-full md:w-[62%]">
             <h2 className="font-bold text-[28px] leading-[22px] md:text-[40px] md:leading-[45px] text-center">
               Donde la creatividad
               <br />
@@ -141,7 +145,7 @@ const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
           <div className="flex justify-center mt-8 w-full mx-auto flex-wrap gap-3">
             {mocks.map((tag, index) => (
               <Button key={index} variant="tag" className="gap-2" onClick={tag.onClick}>
-                <b className="text-[16px]">#</b><span>{tag.label}</span>
+                <span>{tag.label}</span>
               </Button>
             ))}
           </div>

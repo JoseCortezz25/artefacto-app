@@ -25,18 +25,18 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
   return (
     <article className={cn(
       "flex gap-4 rounded-[25px] py-5 pl-7 pr-4 w-full max-w-[100%] md:max-w-[85%]",
-      role === User.AI && "bg-blue-100/30 dark:bg-blue-500",
-      role === User.User && "bg-gray-100/10 dark:bg-[#2f2f2f]"
+      role === User.AI && "bg-blue-100/60 dark:bg-blue-500",
+      role === User.User && "bg-gray-100/80 dark:bg-[#2f2f2f]"
     )}>
       <div>
         {role === User.AI && (
-          <div className="bg-blue-100 dark:bg-blue-600 p-2 rounded-full">
+          <div className="bg-blue-200 dark:bg-blue-600 p-2 rounded-full">
             <Brain className="size-[22px]" />
           </div>
         )}
 
         {role === User.User && (
-          <div className="bg-gray-200/80 dark:bg-[#1d1d1d] p-2 rounded-full">
+          <div className="bg-gray-200/90 dark:bg-[#1d1d1d] p-2 rounded-full">
             <User2 className="size-[22px]" />
           </div>
         )}
@@ -49,7 +49,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
           </div>
 
           {badge === SourceType.Internet && (
-            <span className="whitespace-nowrap rounded-full bg-blue-100 dark:bg-blue-200 px-2.5 py-0.5 text-sm text-blue-800 dark:text-blue-800 font-medium">
+            <span className="whitespace-nowrap rounded-full bg-blue-200 dark:bg-blue-200 px-2.5 py-0.5 text-sm text-blue-800 dark:text-blue-800 font-medium">
               Generado con información de internet
             </span>
           )}
