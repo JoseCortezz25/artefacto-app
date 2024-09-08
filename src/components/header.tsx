@@ -1,9 +1,7 @@
-import { Github } from "./icons";
 import SheetSettings from "./sheet-settings";
 import { ModeToggle } from "./toggle-mode";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { SettingsIcon } from "lucide-react";
 

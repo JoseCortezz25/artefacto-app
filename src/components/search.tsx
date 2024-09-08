@@ -10,7 +10,7 @@ interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   onChange?: ChangeEventHandler<HTMLInputElement> | undefined;
   value?: string;
-  onSubmit?: (e: any) => Promise<void>;
+  onSubmit?: (e: unknown) => Promise<void>;
   variant?: Steps;
 }
 

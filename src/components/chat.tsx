@@ -11,7 +11,8 @@ const Chat = () => {
   const [search, setSearch] = useState("");
   const { submitUserMessage } = useActions();
   const [conversation, setConversation] = useUIState();
-  const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
