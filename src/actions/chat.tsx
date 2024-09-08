@@ -12,7 +12,6 @@ import { Creativity, Models, SourceType, User } from "@/lib/types";
 import WeatherCard from "@/components/weather-card";
 import RecipeCard from "@/components/recipe-card";
 
-
 export interface ServerMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -34,46 +33,41 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
   'use server';
   const history = getMutableAIState();
 
-  const modelConfig = {
-    model: (apiKey: string) => {
-      const google = createGoogleGenerativeAI({ apiKey });
-      const openai = createOpenAI({ apiKey });
+  const getCreativity = (creativity: Creativity | number) => {
+    if (creativity === Creativity.Low) {
+      return 0.2;
+    }
 
-      switch (config.model) {
-        case Models.GPT4o:
-          return openai('gpt-4o');
-        case Models.GPT4oMini:
-          return openai('gpt-4o-mini');
-        case Models.Gemini15ProLatest:
-          return google('models/gemini-1.5-pro-latest');
-        case Models.GeminiFlash15:
-          return google('models/gemini-1.5-flash-latest');
-        default:
-          return google('models/gemini-1.5-pro-latest');
-      }
-    },
-    creativity: () => {
-      if (config.creativity === Creativity.Low) {
-        return 0.2;
-      }
+    if (creativity === Creativity.Medium) {
+      return 0.5;
+    }
 
-      if (config.creativity === Creativity.Medium) {
-        return 0.5;
-      }
-
-      if (config.creativity === Creativity.High) {
-        return 0.9;
-      }
+    if (creativity === Creativity.High) {
+      return 0.9;
     }
   };
+
+  const temperature = getCreativity(config.creativity);
 
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 
+  const getModel = () => {
+    if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
+      const google = createGoogleGenerativeAI({ apiKey: config.apiKey });
+      const model = google(`models/${config.model}`);
+      return model;
+    }
+
+    const openai = createOpenAI({ apiKey: config.apiKey });
+    const model = openai(`${config.model}`);
+    return model;
+  };
+
   try {
     const result = await streamUI({
-      model: modelConfig.model(config.apiKey),
-      temperature: modelConfig.creativity(),
+      model: getModel(),
+      temperature,
       messages: [...history.get(), { role: 'user', content: input }],
       system: `\
       Actua como un asistente personal para ayudarte a encontrar información en internet.
@@ -89,7 +83,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
       Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por José Cortes".
       SI te preguntan por la fecha de hoy, puedes responder: "Hoy es ${formattedDate}".
     `,
-      text: async function* ({ content, done }) {
+      text: async function* ({ content, done }: { content: string; done: boolean }) {
         if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
           yield <Message role={User.AI} content="" isComponent>
             <i>
@@ -113,7 +107,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
           parameters: z.object({
             question: z.string().describe('La pregunta que el usuario hizo al asistente.')
           }),
-          generate: async ({ question }) => {
+          generate: async ({ question }: { question: string }) => {
             const answer = await generateResultModel(question, config);
 
             history.done((messages: ServerMessage[]) => [
@@ -133,7 +127,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
           parameters: z.object({
             city: z.string().describe('El nombre de la ciudad de la que el usuario desea obtener el clima.')
           }),
-          generate: async function* ({ city }) {
+          generate: async function* ({ city }: { city: string }) {
             yield <Message role={User.AI} isComponent={true} content="">
               <i>
                 Generando respuesta...
@@ -165,7 +159,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
           parameters: z.object({
             query: z.string().describe('La entrada del usuario que se utilizará para generar la receta.')
           }),
-          generate: async function* ({ query }) {
+          generate: async function* ({ query }: { query: string }) {
             yield <Message role={User.AI} isComponent={true} content="">
               <i>
                 Generando receta...
@@ -205,7 +199,6 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
     };
 
   } catch (error) {
-    console.log('error:', error);
 
     return {
       id: generateId(),

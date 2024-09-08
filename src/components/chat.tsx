@@ -78,7 +78,8 @@ const Chat = () => {
           className="w-full"
           value={search}
           onChange={({ target }) => setSearch(target.value)}
-          onSubmit={handleSearch}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onSubmit={(e: any) => handleSearch(e)}
           variant={Steps.Chat}
         />
         <p className="mt-2 text-[15px] text-center text-muted-foreground">Artefacto puede cometer errores. Comprueba la información importante.</p>

@@ -3,21 +3,28 @@
 import { ArrowUp, Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import { ChangeEventHandler, InputHTMLAttributes } from "react";
+import { ChangeEventHandler, FormEvent, InputHTMLAttributes } from "react";
 import { Steps } from "@/lib/types";
 
-interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement | HTMLFormElement> {
   className?: string;
   onChange?: ChangeEventHandler<HTMLInputElement> | undefined;
   value?: string;
-  onSubmit?: (e: unknown) => Promise<void>;
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => Promise<void> | undefined;
   variant?: Steps;
 }
 
 const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Search, ...props }: InputSearchProps) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (onSubmit) {
+      await onSubmit(e);
+    }
+  };
+
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={(e) => handleSubmit(e)}
       className={cn("pl-4 bg-neutral-200/30 dark:bg-[#2f2f2f] dark:text-white w-full flex gap-5 justify-between items-center rounded-full transition-all duration-200", className)}
       role="search"
     >

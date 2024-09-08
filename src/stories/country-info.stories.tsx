@@ -71,6 +71,9 @@ const countryData = {
 
 export const Default: Story = {
   args: {
-    country: countryData
+    country: {
+      ...countryData,
+      translations: {} // Add the missing translations property
+    }
   }
 };
