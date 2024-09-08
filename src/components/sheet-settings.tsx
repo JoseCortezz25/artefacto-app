@@ -11,15 +11,15 @@ import {
   SelectTrigger,
   SelectValue
 } from "./ui/select";
+import { toast } from "sonner";
+import { Google, OpenAI } from "./icons";
 
 const SheetSettings = () => {
-  const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState("");
-  const [creativity, setCreativity] = useState("");
+  const [apiKey, setApiKey] = useState(localStorage.getItem("apiKey") || "");
+  const [model, setModel] = useState(localStorage.getItem("model") || "gtp4o");
+  const [creativity, setCreativity] = useState(localStorage.getItem("creativity") || "low");
 
   const onSaveSettings = () => {
-    console.log({ apiKey, model, creativity });
-
     if (!localStorage.getItem("apiKey")) {
       localStorage.setItem("apiKey", apiKey);
     }
@@ -29,6 +29,20 @@ const SheetSettings = () => {
     if (!localStorage.getItem("creativity")) {
       localStorage.setItem("creativity", creativity);
     }
+
+    if (localStorage.getItem("apiKey") !== apiKey) {
+      localStorage.setItem("apiKey", apiKey);
+    }
+
+    if (localStorage.getItem("model") !== model) {
+      localStorage.setItem("model", model);
+    }
+
+    if (localStorage.getItem("creativity") !== creativity) {
+      localStorage.setItem("creativity", creativity);
+    }
+
+    toast.success("Se han guardado los cambios");
   };
 
   return (
@@ -39,15 +53,32 @@ const SheetSettings = () => {
         <p>
           Elige el modelo de IA que deseas utilizar para la generación de la respuesta.
         </p>
-        <Select onValueChange={(e) => setModel(e)}>
+        <Select onValueChange={(e) => setModel(e)} defaultValue={model}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar el modelo" />
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="gtp4o">Open AI - GPT4o </SelectItem>
-            <SelectItem value="gtp4o-mini">Open AI - GPT4o mini</SelectItem>
-            <SelectItem value="gemini-pro-1.5">Google - Gemini Pro 1.5 </SelectItem>
+            <SelectItem value="gpt-4o" className="w-full cursor-pointer">
+              <div className="select-item">
+                <OpenAI className="text-black dark:text-white" />
+                <p>OpenAI - GPT-4o</p>
+              </div>
+            </SelectItem>
+            <SelectItem value="gpt-4o-mini" className="w-full cursor-pointer">
+              <div className="select-item">
+                <OpenAI className="text-black dark:text-white" />
+                <span className="flex gap-2 items-center">
+                  <p>OpenAI - GPT-4o-mini</p>
+                </span>
+              </div>
+            </SelectItem>
+            <SelectItem value="gemini-pro" className="w-full cursor-pointer">
+              <div className="select-item">
+                <Google />
+                <p>Google - Gemini Pro 1.5</p>
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -57,15 +88,15 @@ const SheetSettings = () => {
         <p>
           Moldea la creatividad de la respuesta. Un nivel bajo generará respuestas más predecibles, mientras que un nivel alto generará respuestas más inesperadas.
         </p>
-        <Select onValueChange={(e) => setCreativity(e)}>
+        <Select onValueChange={(e) => setCreativity(e)} defaultValue={creativity}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar el nivel de creatividad" />
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="high">Alto</SelectItem>
-            <SelectItem value="medium">Medio</SelectItem>
             <SelectItem value="low">Bajo</SelectItem>
+            <SelectItem value="medium">Medio</SelectItem>
+            <SelectItem value="high">Alto</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -75,7 +106,7 @@ const SheetSettings = () => {
         <p>
           Ingresa tu clave de API para poder utilizar los servicios del modelo que seleccionaste.
         </p>
-        <Input type="text" onChange={(e) => setApiKey(e.target.value)} />
+        <Input type="text" onChange={(e) => setApiKey(e.target.value)} defaultValue={apiKey} />
       </div>
 
       <Button className="w-full" onClick={onSaveSettings}>

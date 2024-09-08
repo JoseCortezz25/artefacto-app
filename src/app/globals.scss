@@ -116,6 +116,10 @@ pre code.hljs {
   @apply dark:bg-white dark:shadow-black;
 }
 
+.select-item {
+  @apply cursor-pointer flex gap-3 items-center w-full py-2;
+}
+
 @keyframes l1 {
     100% {
       box-shadow: 0 0 0 30px #0000;
