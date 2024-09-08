@@ -53,7 +53,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
   const formattedDate = currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const getModel = () => {
-    if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
+    if (config.model === Models.Gemini15ProLatest || config.model === Models.GeminiFlash15) {
       const google = createGoogleGenerativeAI({ apiKey: config.apiKey });
       const model = google(`models/${config.model}`);
       return model;
@@ -199,6 +199,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
     };
 
   } catch (error) {
+    console.log('ERROR:', error);
 
     return {
       id: generateId(),
