@@ -40,3 +40,21 @@ export enum SourceType {
   Internet = 'Internet',
   NormalAnswer = 'NormalAnswer'
 }
+
+export enum Creativity {
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high'
+}
+
+export enum Models {
+  GPT4o = 'gpt-4o',
+  GPT4oMini = 'gpt-4o-mini',
+  Gemini15ProLatest = 'gemini-1.5-pro-latest'
+}
+
+export interface Options {
+  apiKey: string;
+  model: Models
+  creativity: Creativity
+}

@@ -1,12 +1,12 @@
 "use client";
-import { ClientMessage } from "@/actions/chat";
+import { ClientMessage, ModelConfig } from "@/actions/chat";
 import Chat from "@/components/chat";
 import Header from "@/components/header";
 import Loader from "@/components/loader";
 import Message from "@/components/message";
 import InputSearch from "@/components/search";
 import { Button } from "@/components/ui/button";
-import { Steps, User } from "@/lib/types";
+import { Creativity, Models, Steps, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
@@ -46,8 +46,31 @@ export default function Home() {
         { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
       ]);
 
+      const config: ModelConfig = {
+        model: localStorage.getItem('model') as Models,
+        creativity: localStorage.getItem('creativity') as Creativity,
+        apiKey: localStorage.getItem('apiKey') as string
+      };
 
-      const message = await submitUserMessage(value);
+      if (!config.apiKey) {
+        toast.error("Por favor, ingrese una clave de API válida");
+        setStepper(Steps.Search);
+        return;
+      }
+
+      if (!config.model) {
+        toast.error("Por favor, seleccione un modelo");
+        setStepper(Steps.Search);
+        return;
+      }
+
+      if (!config.creativity) {
+        toast.error("Por favor, seleccione un nivel de creatividad");
+        setStepper(Steps.Search);
+        return;
+      }
+
+      const message = await submitUserMessage(value, config);
 
       setConversation((currentConversation: ClientMessage[]) => [
         ...currentConversation,

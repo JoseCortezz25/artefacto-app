@@ -1,14 +1,17 @@
 "use server";
-import { SearchResults } from "@/lib/types";
+import { Creativity, Models, SearchResults } from "@/lib/types";
 import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOpenAI, ChatOpenAICallOptions, OpenAI, OpenAICallOptions } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { WeatherGeneral } from "@/components/weather-card";
 import { z } from "zod";
-import { RunnableSequence } from "@langchain/core/runnables";
+import { RunnableLike, RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
-
+import { ModelConfig } from "./chat";
+import { AIMessageChunk } from "@langchain/core/messages";
+import { StringPromptValueInterface } from "@langchain/core/prompt_values";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -23,11 +26,43 @@ const wikipediaTool = new WikipediaQueryRun({
   maxDocContentLength: 4000
 });
 
+const MAX_OUTPUT_TOKENS = 2048;
 
-const googleModel = new ChatGoogleGenerativeAI({
-  maxOutputTokens: 2048,
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
-});
+const getCreativity = (creativity: Creativity | number) => {
+  if (creativity === Creativity.Low) {
+    return 0.2;
+  }
+
+  if (creativity === Creativity.Medium) {
+    return 0.5;
+  }
+
+  if (creativity === Creativity.High) {
+    return 0.9;
+  }
+};
+
+const getModel = (config: ModelConfig): ChatOpenAI<ChatOpenAICallOptions> | ChatGoogleGenerativeAI => {
+  if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
+    const model = new ChatOpenAI({
+      model: config.model,
+      temperature: getCreativity(config.creativity),
+      apiKey: config.apiKey,
+      maxTokens: MAX_OUTPUT_TOKENS
+    });
+
+    return model;
+  }
+
+
+  const model = new ChatGoogleGenerativeAI({
+    maxOutputTokens: MAX_OUTPUT_TOKENS,
+    temperature: getCreativity(config.creativity),
+    apiKey: config.apiKey
+  });
+
+  return model;
+};
 
 export const searchOnInternet = async (query: string) => {
   try {
@@ -39,7 +74,7 @@ export const searchOnInternet = async (query: string) => {
   }
 };
 
-export const generateResultModel = async (query: string) => {
+export const generateResultModel = async (query: string, config: ModelConfig) => {
 
   const promptTemplate = PromptTemplate.fromTemplate(`
     Actua como un asistente personal para ayudarte a encontrar información en internet.
@@ -54,9 +89,10 @@ export const generateResultModel = async (query: string) => {
     - "Según la información que tengo disponible"
   `);
 
-  const chain = promptTemplate.pipe(googleModel);
+  const model = getModel(config);
+  const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
 
-  const result = await chain.invoke({
+  const result: AIMessageChunk | string = await chain.invoke({
     query: query,
     searchResults: await searchInternetTool.invoke(query)
   });
@@ -110,7 +146,7 @@ export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
     });
 };
 
-export const generateRecipe = async (query: string) => {
+export const generateRecipe = async (query: string, config: ModelConfig) => {
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       title: z.string(),
@@ -119,6 +155,8 @@ export const generateRecipe = async (query: string) => {
       duration: z.string()
     })
   );
+
+  const model = getModel(config) as RunnableLike<OpenAICallOptions> | RunnableLike<ChatGoogleGenerativeAI>;
 
   const chain = RunnableSequence.from([
     PromptTemplate.fromTemplate(`
@@ -129,7 +167,7 @@ export const generateRecipe = async (query: string) => {
     Estructura de la receta: {formatInstructions}
     La respuesta debe ser en español.
     `),
-    googleModel,
+    model,
     parser
   ]);
 

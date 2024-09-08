@@ -1,9 +1,9 @@
 "use client";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import InputSearch from "./search";
-import { Steps, User } from "@/lib/types";
+import { Creativity, Models, Steps, User } from "@/lib/types";
 import { useActions, useUIState } from "ai/rsc";
-import { ClientMessage } from "@/actions/chat";
+import { ClientMessage, ModelConfig } from "@/actions/chat";
 import { generateId } from "ai";
 import Message from "./message";
 
@@ -41,8 +41,18 @@ const Chat = () => {
       ...currentConversation,
       { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
     ]);
+    debugger;
 
-    const message = await submitUserMessage(value);
+    const config: ModelConfig = {
+      model: localStorage.getItem('model') as Models,
+      creativity: localStorage.getItem('creativity') as Creativity,
+      apiKey: localStorage.getItem('apiKey') as string
+    };
+
+
+    console.log('CONFIG:', config);
+
+    const message = await submitUserMessage(value, config);
 
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,

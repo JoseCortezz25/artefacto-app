@@ -1,15 +1,15 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
-import { google } from '@ai-sdk/google';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenAI } from '@ai-sdk/openai';
 import Message from "@/components/message";
 import { generateRecipe, generateResultModel, getWeatherByCity } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
-import { SourceType, User } from "@/lib/types";
+import { Creativity, Models, SourceType, User } from "@/lib/types";
 import WeatherCard from "@/components/weather-card";
-import Loader from "@/components/loader";
 import RecipeCard from "@/components/recipe-card";
 
 
@@ -24,17 +24,54 @@ export interface ClientMessage {
   display: ReactNode;
 }
 
-export async function submitUserMessage(input: string): Promise<ClientMessage> {
-  'use server';
+export interface ModelConfig {
+  model: Models;
+  creativity: Creativity | number;
+  apiKey: string;
+}
 
+export async function submitUserMessage(input: string, config: ModelConfig): Promise<ClientMessage> {
+  'use server';
   const history = getMutableAIState();
+
+  const modelConfig = {
+    model: (apiKey: string) => {
+      const google = createGoogleGenerativeAI({ apiKey });
+      const openai = createOpenAI({ apiKey });
+
+      switch (config.model) {
+        case Models.GPT4o:
+          return openai('gpt-4o');
+        case Models.GPT4oMini:
+          return openai('gpt-4o-mini');
+        case Models.Gemini15ProLatest:
+          return google('models/gemini-1.5-pro-latest');
+        default:
+          return google('models/gemini-1.5-pro-latest');
+      }
+    },
+    creativity: () => {
+      if (config.creativity === Creativity.Low) {
+        return 0.2;
+      }
+
+      if (config.creativity === Creativity.Medium) {
+        return 0.5;
+      }
+
+      if (config.creativity === Creativity.High) {
+        return 0.9;
+      }
+    }
+  };
 
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 
   try {
     const result = await streamUI({
-      model: google('models/gemini-1.5-pro-latest'),
+      model: modelConfig.model(config.apiKey),
+      temperature: modelConfig.creativity(),
       messages: [...history.get(), { role: 'user', content: input }],
       system: `\
       Actua como un asistente personal para ayudarte a encontrar información en internet.
@@ -50,7 +87,15 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
       Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por José Cortes".
       SI te preguntan por la fecha de hoy, puedes responder: "Hoy es ${formattedDate}".
     `,
-      text: function ({ content, done }) {
+      text: async function* ({ content, done }) {
+        if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
+          yield <Message role={User.AI} content="" isComponent>
+            <i>
+              Generando respuesta...
+            </i>
+          </Message>;
+
+        }
         if (done) {
           history.done((messages: ServerMessage[]) => [
             ...messages,
@@ -67,7 +112,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
             question: z.string().describe('La pregunta que el usuario hizo al asistente.')
           }),
           generate: async ({ question }) => {
-            const answer = await generateResultModel(question);
+            const answer = await generateResultModel(question, config);
 
             history.done((messages: ServerMessage[]) => [
               ...messages,
@@ -125,7 +170,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
               </i>
             </Message>;
 
-            const result = await generateRecipe(query);
+            const result = await generateRecipe(query, config);
 
             history.done((messages: ServerMessage[]) => [
               ...messages,

@@ -13,6 +13,7 @@ import {
 } from "./ui/select";
 import { toast } from "sonner";
 import { Google, OpenAI } from "./icons";
+import { Creativity, Models } from "@/lib/types";
 
 const SheetSettings = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem("apiKey") || "");
@@ -59,13 +60,13 @@ const SheetSettings = () => {
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="gpt-4o" className="w-full cursor-pointer">
+            <SelectItem value={Models.GPT4o} className="w-full cursor-pointer">
               <div className="select-item">
                 <OpenAI className="text-black dark:text-white" />
                 <p>OpenAI - GPT-4o</p>
               </div>
             </SelectItem>
-            <SelectItem value="gpt-4o-mini" className="w-full cursor-pointer">
+            <SelectItem value={Models.GPT4oMini} className="w-full cursor-pointer">
               <div className="select-item">
                 <OpenAI className="text-black dark:text-white" />
                 <span className="flex gap-2 items-center">
@@ -73,7 +74,7 @@ const SheetSettings = () => {
                 </span>
               </div>
             </SelectItem>
-            <SelectItem value="gemini-pro" className="w-full cursor-pointer">
+            <SelectItem value={Models.Gemini15ProLatest} className="w-full cursor-pointer">
               <div className="select-item">
                 <Google />
                 <p>Google - Gemini Pro 1.5</p>
@@ -94,9 +95,9 @@ const SheetSettings = () => {
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="low">Bajo</SelectItem>
-            <SelectItem value="medium">Medio</SelectItem>
-            <SelectItem value="high">Alto</SelectItem>
+            <SelectItem value={Creativity.Low}>Bajo</SelectItem>
+            <SelectItem value={Creativity.Medium}>Medio</SelectItem>
+            <SelectItem value={Creativity.High}>Alto</SelectItem>
           </SelectContent>
         </Select>
       </div>
