@@ -100,7 +100,7 @@ export const generateResultModel = async (query: string, config: ModelConfig) =>
   return result.content as string;
 };
 
-export const generateTitle = async (content: string) => {
+export const generateTitle = async (content: string, config: ModelConfig) => {
   const promptTemplate = PromptTemplate.fromTemplate(`
     Actua como un expero en generar titulos de acuerdo a la respuesta de una AI. 
     Tu misión es generar un titulo que resuma la respuesta de la AI.
@@ -110,11 +110,12 @@ export const generateTitle = async (content: string) => {
     Instrucciones para generar el titulo:
     - No generes preguntas.
     - Manten un tono objetivo.
-    - Sé conciso y claro.
+    - Sé conciso y clgoogleModelaro.
     - Solo genera un titulo, no generes un titulo que su contenido tenga dos puntos y semejantes.
   `);
 
-  const chain = promptTemplate.pipe(googleModel);
+  const model = getModel(config);
+  const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
 
   const result = await chain.invoke({
     content: content
