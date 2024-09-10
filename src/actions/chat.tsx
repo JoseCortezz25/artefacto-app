@@ -1,191 +1,215 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AIState, DELTA_STATUS, SourceType, UIState, User } from "@/lib/types";
-import { nanoid } from "nanoid";
-import { createAI, createStreamableUI, createStreamableValue, getMutableAIState } from "ai/rsc";
-import { streamText } from "ai";
-import { google } from '@ai-sdk/google';
+import { createAI, getMutableAIState, streamUI } from "ai/rsc";
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenAI } from '@ai-sdk/openai';
 import Message from "@/components/message";
-import { generateResultModel, searchOnInternet, searchOnWikipedia } from "./actions";
+import { generateRecipe, generateResultModel, getWeatherByCity } from "./actions";
 import { z } from "zod";
+import { generateId } from 'ai';
+import { ReactNode } from "react";
+import { Creativity, Models, SourceType, User } from "@/lib/types";
+import WeatherCard from "@/components/weather-card";
+import RecipeCard from "@/components/recipe-card";
 
-const submitUserMessage = async (message: string) => {
-  "use server";
-  const aiState = getMutableAIState<typeof AI>();
+export interface ServerMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
-  // Update AI state with new message.
-  aiState.update({
-    ...aiState.get(),
-    messages: [
-      ...aiState.get().messages,
-      {
-        id: nanoid(),
-        role: 'user',
-        content: message
-      }
-    ]
-  });
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  display: ReactNode;
+}
 
-  const history: any = aiState.get().messages.map((message: any) => ({
-    role: message.role,
-    content: message.content
-  }));
+export interface ModelConfig {
+  model: Models;
+  creativity: Creativity | number;
+  apiKey: string;
+}
 
-  const textStream = createStreamableValue('');
-  const spinnerStream = createStreamableUI(<div className="w-full flex items-center justify-center">Cargando...</div>);
-  const messageStream = createStreamableUI(null);
-  const uiStream = createStreamableUI();
+export async function submitUserMessage(input: string, config: ModelConfig): Promise<ClientMessage> {
+  'use server';
+  const history = getMutableAIState();
+
+  const getCreativity = (creativity: Creativity | number) => {
+    if (creativity === Creativity.Low) {
+      return 0.2;
+    }
+
+    if (creativity === Creativity.Medium) {
+      return 0.5;
+    }
+
+    if (creativity === Creativity.High) {
+      return 0.9;
+    }
+  };
+
+  const temperature = getCreativity(config.creativity);
+
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const getModel = () => {
+    if (config.model === Models.Gemini15ProLatest || config.model === Models.GeminiFlash15) {
+      const google = createGoogleGenerativeAI({ apiKey: config.apiKey });
+      const model = google(`models/${config.model}`);
+      return model;
+    }
+
+    const openai = createOpenAI({ apiKey: config.apiKey });
+    const model = openai(`${config.model}`);
+    return model;
+  };
 
   try {
-    const result = await streamText({
-      model: google('models/gemini-1.5-pro-latest'),
-      temperature: 0.5,
-      system: `
-        Actua como un asistente personal para ayudarte a encontrar información en internet.
-        El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
-        Tus respuestas deben ser informativas y en español. Ignora cualquier solicitud en inglés u otros idiomas.
+    const result = await streamUI({
+      model: getModel(),
+      temperature,
+      messages: [...history.get(), { role: 'user', content: input }],
+      system: `\
+      Actua como un asistente personal para ayudarte a encontrar información en internet.
+      El usuario puede hacer preguntas y tu como asistente responderas la información relevante.
+      Tus respuestas deben ser informativas y en español. Ignora cualquier solicitud en inglés u otros idiomas.
 
-        Evita decir estas frases en tu respuesta:
-        - "Según la información disponible en línea"
-        - "Según la informacion de internet"
-        - "Según la informacion que tengo"
-        - "Según la información que tengo disponible"
-      `,
-      messages: [...history],
+      Evita decir estas frases en tu respuesta:
+      - "Según la información disponible en línea"
+      - "Según la informacion de internet"
+      - "Según la informacion que tengo"
+      - "Según la información que tengo disponible"
+
+      Si te preguntan quien te creo o quien te programo, puedes responder: "Fui creado por José Cortes".
+      SI te preguntan por la fecha de hoy, puedes responder: "Hoy es ${formattedDate}".
+    `,
+      text: async function* ({ content, done }: { content: string; done: boolean }) {
+        if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
+          yield <Message role={User.AI} content="" isComponent>
+            <i>
+              Generando respuesta...
+            </i>
+          </Message>;
+
+        }
+        if (done) {
+          history.done((messages: ServerMessage[]) => [
+            ...messages,
+            { role: 'assistant', content }
+          ]);
+        }
+
+        return <Message role={User.AI} content={content} />;
+      },
       tools: {
         searchOnInternet: {
           description: 'Usa en internet para obtener información que no tengas presente para responder al usuario.',
           parameters: z.object({
             question: z.string().describe('La pregunta que el usuario hizo al asistente.')
-          })
+          }),
+          generate: async ({ question }: { question: string }) => {
+            const answer = await generateResultModel(question, config);
+
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              {
+                role: 'assistant',
+                content: answer
+              }
+            ]);
+
+
+            return <Message role={User.AI} content={answer} badge={SourceType.Internet} />;
+          }
         },
-        searchOnWikipedia: {
-          description: 'Usa Wikipedia para obtener información sobre hechos historicos, historia, geografia, eventos, personas, etc que no tengas presente para responder al usuario.',
+        getWeatherByCity: {
+          description: 'Usa la API de OpenWeather para obtener el clima actual de una ciudad.',
           parameters: z.object({
-            question: z.string().describe('La pregunta que el usuario hizo al asistente.')
-          })
+            city: z.string().describe('El nombre de la ciudad de la que el usuario desea obtener el clima.')
+          }),
+          generate: async function* ({ city }: { city: string }) {
+            yield <Message role={User.AI} isComponent={true} content="">
+              <i>
+                Generando respuesta...
+              </i>
+            </Message>;
+
+            const result = await getWeatherByCity(city);
+
+            if (result) {
+
+              history.done((messages: ServerMessage[]) => [
+                ...messages,
+                {
+                  role: 'assistant',
+                  content: `El clima en ${result.name} es de ${result.weather?.[0].description} con una temperatura de ${result.main?.temp}°C.`
+                }
+              ]);
+
+              return <Message role={User.AI} isComponent={true} content="">
+                <WeatherCard weather={result} />
+              </Message>;
+            } else {
+              return <Message role={User.AI} content="No se pudo obtener el clima de la ciudad. Intenta de nuevo." />;
+            }
+          }
+        },
+        generateRecipeFromUserInput: {
+          description: 'Genera una receta de cocina a partir de la entrada del usuario.',
+          parameters: z.object({
+            query: z.string().describe('La entrada del usuario que se utilizará para generar la receta.')
+          }),
+          generate: async function* ({ query }: { query: string }) {
+            yield <Message role={User.AI} isComponent={true} content="">
+              <i>
+                Generando receta...
+              </i>
+            </Message>;
+
+            const result = await generateRecipe(query, config);
+
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              {
+                role: 'assistant',
+                content: `Aquí tienes una receta de ${query}.
+                ${result.title}
+                Duración: ${result.duration}
+                
+                Ingredientes:
+                ${result.ingredients.join('\n')}
+                
+                Instrucciones:
+                ${result.instructions.join('\n')}
+                `
+              }
+            ]);
+
+            return <Message role={User.AI} content="" isComponent={true}>
+              <RecipeCard recipe={result} />
+            </Message>;
+          }
         }
       }
     });
-
-    let textContent = '';
-    spinnerStream.done(null);
-
-    for await (const delta of result.fullStream) {
-      const { type } = delta;
-      console.log("delta", delta);
-
-      if (type === DELTA_STATUS.TEXT_DELTA) {
-        console.log("------------ DELTA_STATUS.TEXT_DELTA ------------");
-        console.log("delta", delta.textDelta);
-
-        const { textDelta } = delta;
-        textContent += textDelta;
-
-        messageStream.update(
-          <Message
-            role={User.AI}
-            content={textContent}
-          />
-        );
-
-        aiState.done({
-          ...aiState.get(),
-          messages: [
-            ...aiState.get().messages,
-            {
-              id: nanoid(),
-              role: 'assistant',
-              content: delta.textDelta
-            }
-          ]
-        });
-
-      }
-      if (type === DELTA_STATUS.TOOL_CALL) {
-        console.log("------------ DELTA_STATUS.TOOL_CALL ------------");
-        console.log("delta toolName", delta.toolName);
-        console.log("delta argsTextDelta", delta.argsTextDelta);
-        console.log("delta toolCallId", delta.toolCallId);
-
-        console.log("TOOL ", delta.toolName);
-
-        if (delta.toolName === 'searchOnInternet') {
-          console.log('QUESTION', delta.args.question);
-
-          const answer = await generateResultModel(delta.args.question);
-          console.log("searchResults", answer);
-
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: answer
-              }
-            ]
-          });
-
-          messageStream.update(
-            <Message
-              role={User.AI}
-              content={answer}
-              badge={SourceType.Internet}
-            />
-          );
-        }
-
-        if (delta.toolName === 'searchOnWikipedia') {
-          console.log('QUESTION', delta.args.question);
-
-          const answer = await searchOnWikipedia(delta.args.question);
-          console.log("searchResults", answer);
-
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: answer
-              }
-            ]
-          });
-
-          messageStream.update(
-            <Message
-              role={User.AI}
-              content={answer}
-              badge={SourceType.Wikipedia}
-            />
-          );
-        }
-
-
-      }
-    }
-
-    uiStream.done();
-    textStream.done();
-    messageStream.done();
     return {
-      id: nanoid(),
-      spinner: spinnerStream.value,
-      display: messageStream.value
+      id: generateId(),
+      role: 'assistant',
+      display: result.value
     };
 
   } catch (error) {
-    uiStream.error(error);
-    textStream.error(error);
-    messageStream.error(error);
+    return {
+      id: generateId(),
+      role: 'assistant',
+      display: <Message role={User.AI} content="Lo siento, ha ocurrido un error en mi sistema. Por favor intenta de nuevo." />
+    };
   }
-};
+
+}
 
 // createAI creates a new ai/rsc instance.
-export const AI = createAI<AIState, UIState>({
+export const AI = createAI<ServerMessage[], ClientMessage[]>({
   // Add server Actions
   actions: {
     submitUserMessage
@@ -198,5 +222,5 @@ export const AI = createAI<AIState, UIState>({
   initialUIState: [],
   // It is what the application uses to display the UI. 
   // It is a client-side state (very similar to useState) and contains data and UI elements returned by the LLM and your Server Actions.
-  initialAIState: { messages: [] }
+  initialAIState: []
 });

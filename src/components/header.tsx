@@ -9,8 +9,8 @@ interface HeaderProps {
 
 const Header = ({ title }: HeaderProps) => {
   return (
-    <header className="w-full py-4 bg-white/90 sticky top-0 backdrop-blur-md px-4 lg:px-0">
-      <div className="mx-auto max-w-[1024px] flex items-center justify-between">
+    <header className="w-full py-4 bg-white/90 sticky top-0 backdrop-blur-md px-4 lg:px-4 dark:bg-neutral-900">
+      <div className="mx-auto max-w-[1424px] flex items-center justify-between">
         <nav>
           <span className="text-[20px] font-bold ">Artefacto</span>
         </nav>
