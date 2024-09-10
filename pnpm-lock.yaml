@@ -13,13 +13,16 @@ dependencies:
     version: 0.0.58(zod@3.23.8)
   '@langchain/community':
     specifier: ^0.2.20
-    version: 0.2.20(duck-duck-scrape@2.2.5)
+    version: 0.2.20(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5)
   '@langchain/core':
     specifier: ^0.2.17
     version: 0.2.17(langchain@0.2.10)
   '@langchain/google-genai':
     specifier: ^0.0.23
     version: 0.0.23(langchain@0.2.10)(zod@3.23.8)
+  '@langchain/langgraph':
+    specifier: ^0.2.2
+    version: 0.2.2(@langchain/core@0.2.17)
   '@langchain/openai':
     specifier: ^0.2.10
     version: 0.2.10(langchain@0.2.10)
@@ -2325,7 +2328,7 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@langchain/community@0.2.20(duck-duck-scrape@2.2.5):
+  /@langchain/community@0.2.20(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5):
     resolution: {integrity: sha512-3RyaH2CoFzn+2d9aDjHVFqK9499aL5BUixjFVJ8dGcarMN1vpgdLqkUMrJnpgZ06o7+SHhD8mvMmsMLSNSc4yA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -2695,6 +2698,7 @@ packages:
         optional: true
     dependencies:
       '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/langgraph': 0.2.2(@langchain/core@0.2.17)
       '@langchain/openai': 0.2.10(langchain@0.2.10)
       binary-extensions: 2.3.0
       duck-duck-scrape: 2.2.5
@@ -2769,6 +2773,29 @@ packages:
       - langchain
       - openai
       - zod
+    dev: false
+
+  /@langchain/langgraph-checkpoint@0.0.5(@langchain/core@0.2.17):
+    resolution: {integrity: sha512-Twa4e93BlGqpuwgdvhviNgcjefEKnY1L4roA8BrN/2eNQAAAbB0ETS9ix8k+5uahAC2DXWTBO2bXeYYYHQpWuw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.2.31 <0.3.0'
+    dependencies:
+      '@langchain/core': 0.2.17(langchain@0.2.10)
+      uuid: 10.0.0
+    dev: false
+
+  /@langchain/langgraph@0.2.2(@langchain/core@0.2.17):
+    resolution: {integrity: sha512-DTw3LMUqBH2nDMrVXWSDusKUEWpdXV7pLlbC0O+LO6225NuSqFHW5mniII8L86IVTPi7pX9ZSF/MXsPA07vq5w==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.2.31 <0.3.0'
+    dependencies:
+      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/langgraph-checkpoint': 0.0.5(@langchain/core@0.2.17)
+      double-ended-queue: 2.1.0-0
+      uuid: 10.0.0
+      zod: 3.23.8
     dev: false
 
   /@langchain/openai@0.2.10(langchain@0.2.10):
@@ -6429,6 +6456,10 @@ packages:
       no-case: 3.0.4
       tslib: 2.7.0
     dev: true
+
+  /double-ended-queue@2.1.0-0:
+    resolution: {integrity: sha512-+BNfZ+deCo8hMNpDqDnvT+c0XpJ5cUa6mqYq89bho2Ifze4URTqRkcwR399hWoTrTkbZ/XJYDgP6rc7pRgffEQ==}
+    dev: false
 
   /duck-duck-scrape@2.2.5:
     resolution: {integrity: sha512-RTu/Ag5LhgD/j1l2zVGCwTINBoEYCffl58nMoBjtXWJG8tTex72h3gxpDjAr8jVqFaBvhgASNKTUsE31JeqYgw==}

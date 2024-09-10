@@ -4,7 +4,7 @@ import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
 import Message from "@/components/message";
-import { generateRecipe, generateResultModel, getWeatherByCity } from "./actions";
+import { generateRecipe, generateResultModel, generateTranslatedText, getWeatherByCity } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
@@ -188,6 +188,36 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
             return <Message role={User.AI} content="" isComponent={true}>
               <RecipeCard recipe={result} />
             </Message>;
+          }
+        },
+        generateTraduction: {
+          description: "Usa esta herramienta cuando necesites traducir un texto a otro idioma. Si te dan un texto y te indican el idioma a traducir, debes determinar el idioma de origen y traducirlo al idioma indicado.",
+          parameters: z.object({
+            fromLang: z.string().describe('El idioma de origen del texto.'),
+            toLang: z.string().describe('El idioma al que se traducirá el texto.'),
+            input: z.string().describe('El texto que se traducirá.')
+          }),
+          generate: async function* ({ fromLang, toLang, input }: { fromLang: string; toLang: string; input: string }) {
+            yield <Message role={User.AI} content="" isComponent>
+              <i>
+                Generando traducción...
+              </i>
+            </Message>;
+
+            const result = await generateTranslatedText(fromLang, toLang, input, config);
+
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              {
+                role: 'assistant',
+                content: `
+                El resultado de la traducción del texto ${input} de ${fromLang} a ${toLang} es:
+                ${result}.
+                `
+              }
+            ]);
+
+            return <Message role={User.AI} content={"result"} />;
           }
         }
       }
