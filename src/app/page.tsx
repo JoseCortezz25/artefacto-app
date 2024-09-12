@@ -5,12 +5,12 @@ import Header from "@/components/header";
 import Loader from "@/components/loader";
 import Message from "@/components/message";
 import InputSearch from "@/components/search";
-import { Button } from "@/components/ui/button";
 import { Creativity, Models, Steps, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { useState } from "react";
+import { CloudMoonIcon, Code, Earth, PawPrint } from "lucide-react";
+import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
@@ -37,19 +37,23 @@ export default function Home() {
 
     try {
       const value = searchValue.trim();
-      setSearch('');
+      setSearch("");
       setStepper(Steps.Loading);
       setTitle("");
 
       setConversation((currentConversation: ClientMessage[]) => [
         ...currentConversation,
-        { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
+        {
+          id: generateId(),
+          role: "user",
+          display: <Message role={User.User} content={value} />
+        }
       ]);
 
       const config: ModelConfig = {
-        model: localStorage.getItem('model') as Models,
-        creativity: localStorage.getItem('creativity') as Creativity,
-        apiKey: localStorage.getItem('apiKey') as string
+        model: localStorage.getItem("model") as Models,
+        creativity: localStorage.getItem("creativity") as Creativity,
+        apiKey: localStorage.getItem("apiKey") as string
       };
 
       if (!config.apiKey) {
@@ -78,7 +82,6 @@ export default function Home() {
       ]);
 
       setStepper(Steps.Chat);
-
     } catch (error) {
       if (stepper === Steps.Loading) {
         setStepper(Steps.Search);
@@ -86,36 +89,40 @@ export default function Home() {
     }
   };
 
-  const tagMocks = [
+  const recommends = [
     {
-      label: "Historia de la computación",
-      onClick: () => handleSearch("Historia de la computación")
+      label: "Lista de nombres para mascotas",
+      icon: <PawPrint className="size-[18px] text-yellow-500" />,
+      onClick: () => handleSearch("Lista de nombres para mascotas")
     },
     {
-      label: "Investigación reciente sobre la longevidad",
-      onClick: () => handleSearch("Investigación reciente sobre la longevidad")
+      label: "Preguntar las capitales",
+      icon: <Earth className="size-[18px] text-blue-400" />,
+      onClick: () => handleSearch("Preguntar las capitales")
     },
     {
-      label: "¿Cuál es el clima en Lima?",
-      onClick: () => handleSearch("¿Cuál es el clima en Lima?")
+      label: "Dime el clima de Lima",
+      icon: <CloudMoonIcon className="size-[18px] text-blue-400" />,
+      onClick: () => handleSearch("Dime el clima de Lima")
     },
     {
-      label: "Receta de pizza de pepperoni",
-      onClick: () => handleSearch("Receta de pizza de pepperoni")
-    },
-    {
-      label: "Dame un ejemplo de código Python",
-      onClick: () => handleSearch("Dame un ejemplo de código Python")
+      label: "Explicame un ejemplo de código Python",
+      icon: <Code className="size-[18px]" />,
+      onClick: () => handleSearch("Explicame un ejemplo de código Python")
     }
   ];
 
   return (
     <>
       <Header title={title} />
-      <main className="flex min-h-[calc(100dvh-72px)] sm:min-h-[calc(100dvh-90px)] flex-col items-center justify-center  px-4 py-0 sm:py-7 md:px-10 md:py-0">
-        <div className={cn("w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center")}>
+      <main className="flex min-h-[calc(100dvh-72px)] flex-col items-center justify-center px-2 sm:px-4 py-0 sm:py-7 md:px-10 md:py-0">
+        <div
+          className={cn(
+            "w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center"
+          )}
+        >
           {stepper === Steps.Search && (
-            <InitialPage mocks={tagMocks} onSearch={handleSearch} />
+            <InitialPage recommends={recommends} onSearch={handleSearch} />
           )}
 
           {stepper === Steps.Loading && (
@@ -125,55 +132,70 @@ export default function Home() {
                   <div className="mb-6">
                     <Loader />
                   </div>
-                  <h2 className="text-[30px] leading-[36px] text-center font-medium">
-                    Buscando en el rincón más profundo de la web para responderte...🚀
+                  <h2 className="text-[20px] leading-[24px] sm:text-[30px] sm:leading-[36px] text-center font-medium">
+                    Buscando en el rincón más profundo de la web para
+                    responderte...🚀
                   </h2>
                 </div>
               </div>
             </section>
           )}
 
-          {stepper === Steps.Chat && (
-            <Chat />
-          )}
+          {stepper === Steps.Chat && <Chat />}
         </div>
-      </main >
+      </main>
     </>
   );
 }
 
 interface InitialPageProps {
-  mocks: { label: string; onClick?: () => void }[];
-  onSearch: (searchValue: string) => Promise<void>
+  recommends: {
+    label: string;
+    onClick?: () => void,
+    icon: ReactNode
+  }[];
+  onSearch: (searchValue: string) => Promise<void>;
 }
 
-const InitialPage = ({ mocks, onSearch }: InitialPageProps) => {
+interface RecommendBoxProps {
+  label: string;
+  icon: ReactNode,
+  onClick?: () => void
+}
+
+const RecommendBox = ({ label, icon, onClick }: RecommendBoxProps) => {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full relative flex flex-col gap-2 rounded-2xl border border-[rgba(0,0,0,.1)] dark:border-[hsla(0,0%,100%,.1)] px-3 pb-4 pt-3 text-start align-top text-[15px] shadow-[0px_4px_7px_#414040f] transition disabled:cursor-not-allowed hover:bg-neutral-100/30 dark:hover:bg-neutral-800"
+    >
+      {icon}
+      <span className="line-clamp-3 max-w-full text-balance text-gray-600 dark:text-[#9b9b9b] break-word">
+        {label}
+      </span>
+    </button>
+  );
+};
+
+const InitialPage = ({ recommends, onSearch }: InitialPageProps) => {
   const [search, setSearch] = useState("");
 
   return (
-    <section className="w-full h-full flex flex-col justify-center">
-      <div className=" mx-auto flex flex-col items-center justify-between h-[60dvh]">
-        <div className="flex items-center flex-col">
-          <div className="flex flex-col justify-center gap-6 w-full md:w-[62%]">
-            <h2 className="font-bold text-[28px] leading-[22px] md:text-[40px] md:leading-[45px] text-center">
-              Donde la creatividad
-              <br />
-              se une al conocimiento
-            </h2>
-            <p className="text-sm text-muted-foreground font-medium text-center">
-              Eligue alguna de las siguientes opciones para comenzar o pregunta algo.
-            </p>
-          </div>
+    <section className="flex flex-col justify-between gap-4 pb-3 w-full">
+      <div className="h-[calc(100%-70px)] flex flex-col justify-center">
 
-          <div className="flex justify-center mt-8 w-full mx-auto flex-wrap gap-3">
-            {mocks.map((tag, index) => (
-              <Button key={index} variant="tag" className="gap-2" onClick={tag.onClick}>
-                <span>{tag.label}</span>
-              </Button>
-            ))}
-          </div>
+        <h2 className="font-bold text-[23px] leading-[23px] md:text-[40px] md:leading-[43px] text-center">
+          Donde la creatividad
+          <br />
+          se une al conocimiento
+        </h2>
+        <div className="grid grid-cols-2 gap-3 mt-[38px] md:flex md:flex-row md:gap-5 md:mt-[48px]">
+          {recommends.map((recommend) => (
+            <RecommendBox label={recommend.label} icon={recommend.icon} key={recommend.label} onClick={recommend.onClick} />
+          ))}
         </div>
-
+      </div>
+      <div>
         <InputSearch
           className="w-full"
           value={search}

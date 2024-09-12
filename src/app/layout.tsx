@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.scss";
 import { AI } from "@/actions/chat";
 import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>
+      <body className={cn(montserrat.className, 'dark:bg-[#212121]')}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

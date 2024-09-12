@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header = ({ title }: HeaderProps) => {
   return (
-    <header className="w-full py-4 bg-white/90 sticky top-0 backdrop-blur-md px-4 lg:px-4 dark:bg-neutral-900">
+    <header className="w-full py-4 bg-white/90 sticky top-0 backdrop-blur-md px-2 sm:px-4 lg:px-4 dark:bg-[#212121]">
       <div className="mx-auto max-w-[1424px] flex items-center justify-between">
         <nav>
           <span className="text-[20px] font-bold flex items-center">Artefacto <Badge className="ml-2">Beta</Badge></span>
@@ -29,17 +29,17 @@ const Header = ({ title }: HeaderProps) => {
                 <SettingsIcon className="size-[24px]" />
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
+            <SheetContent className="overflow-y-scroll">
+              <SheetHeader className="text-start">
                 <SheetTitle className="font-bold text-[19px]">Configuración</SheetTitle>
                 <SheetDescription className="text-[15px]">
                   Configura el modelo y la API KEY para generar la busqueda.
                 </SheetDescription>
               </SheetHeader>
-              <div className="w-full h-[calc(100dvh-81.5px-48px)] flex flex-col justify-between">
+              <div className="w-full h-full flex flex-col justify-between">
                 <SheetSettings />
 
-                <p className="text-center text-muted-foreground text-[14px]">Creado por {' '}
+                <p className="text-center text-muted-foreground text-[14px] mt-4">Creado por {' '}
                   <a href="https://github.com/JoseCortezz25" target="_blank" rel="noopener noreferrer">
                     <strong>@JoseCortezz25</strong>
                   </a>
