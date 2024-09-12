@@ -170,8 +170,7 @@ export const generateRecipe = async (query: string, config: ModelConfig) => {
     Estructura de la receta: {formatInstructions}
     La respuesta debe ser en español.
     `),
-    model,
-    parser
+    model
   ]);
 
   const response = await chain.invoke({

@@ -115,7 +115,7 @@ export default function Home() {
   return (
     <>
       <Header title={title} />
-      <main className="flex min-h-[calc(100dvh-72px)] flex-col items-center justify-center px-2 sm:px-4 py-0 md:py-7 md:px-10">
+      <main className="flex min-h-[calc(100dvh-72px)] flex-col items-center justify-center px-2 sm:px-4 py-0 md:px-10">
         <div
           className={cn(
             "w-full max-w-[900px] h-[calc(100dvh-80px)] flex justify-center"

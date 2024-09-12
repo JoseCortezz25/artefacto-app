@@ -24,7 +24,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
 
   return (
     <article className={cn(
-      "flex gap-4 rounded-[25px] p-3 sm:py-5 sm:pl-7 sm:pr-4 w-full max-w-[100%] md:max-w-[85%]",
+      "flex gap-4 rounded-[25px] p-3 sm:py-5 sm:pl-7 sm:pr-4 w-full max-w-[100%] lg:max-w-[85%]",
       role === User.AI && "bg-blue-100/60 dark:bg-[#3b82f6b8]",
       role === User.User && "bg-gray-100/80 dark:bg-[#2f2f2f]"
     )}>

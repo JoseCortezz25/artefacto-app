@@ -45,7 +45,7 @@ const InputSearch = ({ className, onChange, onSubmit, value, variant = Steps.Sea
         )}
 
         {variant === Steps.Chat && (
-          <button className="bg-neutral-800 dark:bg-white size-[40px] md:size-[52px] flex items-center justify-center rounded-full" type="submit">
+          <button className="bg-neutral-800 dark:bg-white size-[40px] md:size-[45px] flex items-center justify-center rounded-full" type="submit">
             <ArrowUp className="text-white dark:text-[#2f2f2f] cursor-pointer size-[28px]" />
           </button>
         )}
