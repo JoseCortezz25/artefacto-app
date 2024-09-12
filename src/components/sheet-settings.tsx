@@ -131,14 +131,14 @@ const SheetSettings = () => {
             />
             <Button
               variant="ghost"
-              className="absolute right-1 h-full w-[40px]"
+              className="absolute right-0.5 h-full w-[40px] p-1"
               onClick={togglePasswordVisibility}
               type="button"
             >
               {isShowAPiKey ? (
-                <EyeIcon className="absolute right-2 top-2 cursor-pointer" />
+                <EyeIcon className="size-[18px] cursor-pointer" />
               ) : (
-                <EyeOff className="absolute right-2 top-2 cursor-pointer" />
+                <EyeOff className="size-[18px] cursor-pointer" />
               )}
             </Button>
           </div>

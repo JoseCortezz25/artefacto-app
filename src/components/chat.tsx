@@ -78,7 +78,9 @@ const Chat = () => {
           onSubmit={(e: any) => handleSearch(e)}
           variant={Steps.Chat}
         />
-        <p className="mt-2 text-[15px] text-center text-muted-foreground">Artefacto puede cometer errores. Comprueba la información importante.</p>
+        <p className="mt-2 text-[12px] md:text-[15px] text-center text-muted-foreground text-pretty">
+          Artefacto puede cometer errores. Comprueba la información importante.
+        </p>
       </div>
     </section>
   );

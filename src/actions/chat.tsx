@@ -4,7 +4,7 @@ import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
 import Message from "@/components/message";
-import { generateRecipe, generateResultModel, generateTranslatedText, getWeatherByCity } from "./actions";
+import { generateRecipe, generateResultModel, getWeatherByCity } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
@@ -204,7 +204,10 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
         //       </i>
         //     </Message>;
 
-        //     const result = await generateTranslatedText(fromLang, toLang, input, config);
+        //     console.log("RESULT");
+        //     const result = await agent.invoke({});
+        //     // const result = await generateTranslatedText(fromLang, toLang, input, config);
+        //     console.log("RESULT", result);
 
         //     history.done((messages: ServerMessage[]) => [
         //       ...messages,
@@ -229,6 +232,8 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
     };
 
   } catch (error) {
+    console.log("ERROR", error);
+
     return {
       id: generateId(),
       role: 'assistant',

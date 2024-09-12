@@ -24,8 +24,8 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
 
   return (
     <article className={cn(
-      "flex gap-4 rounded-[25px] py-5 pl-7 pr-4 w-full max-w-[100%] md:max-w-[85%]",
-      role === User.AI && "bg-blue-100/60 dark:bg-blue-500",
+      "flex gap-4 rounded-[25px] p-3 sm:py-5 sm:pl-7 sm:pr-4 w-full max-w-[100%] lg:max-w-[85%]",
+      role === User.AI && "bg-blue-100/60 dark:bg-[#3b82f6b8]",
       role === User.User && "bg-gray-100/80 dark:bg-[#2f2f2f]"
     )}>
       <div>
@@ -43,7 +43,7 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
       </div>
 
       {!isComponent ? (
-        <div className="flex flex-col items-start gap-2 w-full">
+        <div className="flex flex-col items-start gap-2 w-full font-[500]">
           <div className={cn("mt-2", role === User.User && "font-bold")}>
             <Preview markdown={content}></Preview>
           </div>
@@ -65,8 +65,8 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
               <div className="flex gap-2 justify-between">
                 <nav className="flex gap-2">
                   <Button variant="ghost" onClick={onCopy}>
-                    <CopyIcon className="size-[16px] mr-2" />
-                    Copiar respuesta
+                    <CopyIcon className="size-[16px] sm:mr-2" />
+                    <span className="hidden sm:flex">Copiar respuesta</span>
                   </Button>
                 </nav>
               </div>
