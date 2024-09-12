@@ -13,19 +13,19 @@ dependencies:
     version: 0.0.58(zod@3.23.8)
   '@langchain/community':
     specifier: ^0.2.20
-    version: 0.2.20(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5)
+    version: 0.2.20(@langchain/google-genai@0.0.23)(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5)
   '@langchain/core':
     specifier: ^0.2.17
-    version: 0.2.17(langchain@0.2.10)
+    version: 0.2.17(langchain@0.2.18)
   '@langchain/google-genai':
     specifier: ^0.0.23
-    version: 0.0.23(langchain@0.2.10)(zod@3.23.8)
+    version: 0.0.23(langchain@0.2.18)(zod@3.23.8)
   '@langchain/langgraph':
     specifier: ^0.2.2
     version: 0.2.2(@langchain/core@0.2.17)
   '@langchain/openai':
     specifier: ^0.2.10
-    version: 0.2.10(langchain@0.2.10)
+    version: 0.2.10(langchain@0.2.18)
   '@radix-ui/react-dialog':
     specifier: ^1.1.1
     version: 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
@@ -49,7 +49,7 @@ dependencies:
     version: 1.2.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
   ai:
     specifier: ^3.3.28
-    version: 3.3.28(react@18.3.1)(svelte@4.2.19)(vue@3.5.3)(zod@3.23.8)
+    version: 3.3.28(react@18.3.1)(svelte@4.2.19)(vue@3.5.4)(zod@3.23.8)
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -66,8 +66,8 @@ dependencies:
     specifier: ^11.10.0
     version: 11.10.0
   langchain:
-    specifier: ^0.2.10
-    version: 0.2.10
+    specifier: ^0.2.18
+    version: 0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23)
   lucide-react:
     specifier: ^0.372.0
     version: 0.372.0(react@18.3.1)
@@ -321,7 +321,7 @@ packages:
       zod-to-json-schema: 3.23.2(zod@3.23.8)
     dev: false
 
-  /@ai-sdk/vue@0.0.46(vue@3.5.3)(zod@3.23.8):
+  /@ai-sdk/vue@0.0.46(vue@3.5.4)(zod@3.23.8):
     resolution: {integrity: sha512-H366ydskPbZP8uRs4sm3SAi97P3JVTRI5Q8xYTI6uTaY4UFBA6aOWdDxniYZNa67ebemfe11m7ksX4wHW6Wl8g==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -332,8 +332,8 @@ packages:
     dependencies:
       '@ai-sdk/provider-utils': 1.0.18(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.41(zod@3.23.8)
-      swrv: 1.0.4(vue@3.5.3)
-      vue: 3.5.3(typescript@5.4.5)
+      swrv: 1.0.4(vue@3.5.4)
+      vue: 3.5.4(typescript@5.4.5)
     transitivePeerDependencies:
       - zod
     dev: false
@@ -2328,7 +2328,7 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@langchain/community@0.2.20(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5):
+  /@langchain/community@0.2.20(@langchain/google-genai@0.0.23)(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5):
     resolution: {integrity: sha512-3RyaH2CoFzn+2d9aDjHVFqK9499aL5BUixjFVJ8dGcarMN1vpgdLqkUMrJnpgZ06o7+SHhD8mvMmsMLSNSc4yA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -2697,21 +2697,29 @@ packages:
       youtubei.js:
         optional: true
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       '@langchain/langgraph': 0.2.2(@langchain/core@0.2.17)
-      '@langchain/openai': 0.2.10(langchain@0.2.10)
+      '@langchain/openai': 0.2.10(langchain@0.2.18)
       binary-extensions: 2.3.0
       duck-duck-scrape: 2.2.5
       expr-eval: 2.0.2
       flat: 5.0.2
       js-yaml: 4.1.0
-      langchain: 0.2.10
-      langsmith: 0.1.39(@langchain/core@0.2.17)(langchain@0.2.10)
+      langchain: 0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23)
+      langsmith: 0.1.39(@langchain/core@0.2.17)(langchain@0.2.18)
       uuid: 10.0.0
       zod: 3.23.8
       zod-to-json-schema: 3.23.1(zod@3.23.8)
     transitivePeerDependencies:
       - '@gomomento/sdk-web'
+      - '@langchain/anthropic'
+      - '@langchain/aws'
+      - '@langchain/cohere'
+      - '@langchain/google-genai'
+      - '@langchain/google-vertexai'
+      - '@langchain/groq'
+      - '@langchain/mistralai'
+      - '@langchain/ollama'
       - axios
       - encoding
       - fast-xml-parser
@@ -2721,7 +2729,7 @@ packages:
       - pyodide
     dev: false
 
-  /@langchain/core@0.2.17(langchain@0.2.10):
+  /@langchain/core@0.2.17(langchain@0.2.18):
     resolution: {integrity: sha512-WnFiZ7R/ZUVeHO2IgcSL7Tu+CjApa26Iy99THJP5fax/NF8UQCc/ZRcw2Sb/RUuRPVm6ALDass0fSQE1L9YNJg==}
     engines: {node: '>=18'}
     dependencies:
@@ -2729,7 +2737,7 @@ packages:
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.12
-      langsmith: 0.1.39(@langchain/core@0.2.17)(langchain@0.2.10)
+      langsmith: 0.1.39(@langchain/core@0.2.17)(langchain@0.2.18)
       ml-distance: 4.0.1
       mustache: 4.2.0
       p-queue: 6.6.2
@@ -2742,7 +2750,7 @@ packages:
       - openai
     dev: false
 
-  /@langchain/core@0.2.31(langchain@0.2.10)(openai@4.58.1):
+  /@langchain/core@0.2.31(langchain@0.2.18)(openai@4.58.1):
     resolution: {integrity: sha512-qGfeaACST7dvovgHItzuag9fEBGK7IjCE9vRuTu/y8/WYGJi28WPD/AwWxnu7YdW1vZSuIXO6ZA76t2G9B/oKg==}
     engines: {node: '>=18'}
     dependencies:
@@ -2750,7 +2758,7 @@ packages:
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.12
-      langsmith: 0.1.51(@langchain/core@0.2.31)(langchain@0.2.10)(openai@4.58.1)
+      langsmith: 0.1.51(@langchain/core@0.2.31)(langchain@0.2.18)(openai@4.58.1)
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -2762,12 +2770,32 @@ packages:
       - openai
     dev: false
 
-  /@langchain/google-genai@0.0.23(langchain@0.2.10)(zod@3.23.8):
+  /@langchain/core@0.2.32(langchain@0.2.18):
+    resolution: {integrity: sha512-S27M+9Qou2qtcLfFGEvANkJ/zHq5XApeQsR6Q4I7C6v9x07eoYr558h6vVy6WQmKcksgbCIJ854ikwp173wBjA==}
+    engines: {node: '>=18'}
+    dependencies:
+      ansi-styles: 5.2.0
+      camelcase: 6.3.0
+      decamelize: 1.2.0
+      js-tiktoken: 1.0.12
+      langsmith: 0.1.54(@langchain/core@0.2.32)(langchain@0.2.18)
+      mustache: 4.2.0
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      uuid: 10.0.0
+      zod: 3.23.8
+      zod-to-json-schema: 3.23.1(zod@3.23.8)
+    transitivePeerDependencies:
+      - langchain
+      - openai
+    dev: false
+
+  /@langchain/google-genai@0.0.23(langchain@0.2.18)(zod@3.23.8):
     resolution: {integrity: sha512-MTSCJEoKsfU1inz0PWvAjITdNFM4s41uvBCwLpcgx3jWJIEisczFD82x86ahYqJlb2fD6tohYSaCH/4tKAdkXA==}
     engines: {node: '>=18'}
     dependencies:
       '@google/generative-ai': 0.7.1
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       zod-to-json-schema: 3.23.1(zod@3.23.8)
     transitivePeerDependencies:
       - langchain
@@ -2781,7 +2809,7 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.2.31 <0.3.0'
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       uuid: 10.0.0
     dev: false
 
@@ -2791,18 +2819,18 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.2.31 <0.3.0'
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       '@langchain/langgraph-checkpoint': 0.0.5(@langchain/core@0.2.17)
       double-ended-queue: 2.1.0-0
       uuid: 10.0.0
       zod: 3.23.8
     dev: false
 
-  /@langchain/openai@0.2.10(langchain@0.2.10):
+  /@langchain/openai@0.2.10(langchain@0.2.18):
     resolution: {integrity: sha512-ph5sYDAmhP55Fs3TW3+LXiqF+r/5zaaNO2tur9p2Otr8KWNDSgp5ezfPki1WWfuUJVoSQ+6HDYtr6n2V5N1Lew==}
     engines: {node: '>=18'}
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.10)(openai@4.58.1)
+      '@langchain/core': 0.2.31(langchain@0.2.18)(openai@4.58.1)
       js-tiktoken: 1.0.12
       openai: 4.58.1(zod@3.23.8)
       zod: 3.23.8
@@ -2812,11 +2840,11 @@ packages:
       - langchain
     dev: false
 
-  /@langchain/textsplitters@0.0.3(langchain@0.2.10):
+  /@langchain/textsplitters@0.0.3(langchain@0.2.18):
     resolution: {integrity: sha512-cXWgKE3sdWLSqAa8ykbCcUsUF1Kyr5J3HOWYGuobhPEycXW4WI++d5DhzdpL238mzoEXTi90VqfSCra37l5YqA==}
     engines: {node: '>=18'}
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       js-tiktoken: 1.0.12
     transitivePeerDependencies:
       - langchain
@@ -4801,78 +4829,78 @@ packages:
       pretty-format: 29.7.0
     dev: true
 
-  /@vue/compiler-core@3.5.3:
-    resolution: {integrity: sha512-adAfy9boPkP233NTyvLbGEqVuIfK/R0ZsBsIOW4BZNfb4BRpRW41Do1u+ozJpsb+mdoy80O20IzAsHaihRb5qA==}
+  /@vue/compiler-core@3.5.4:
+    resolution: {integrity: sha512-oNwn+BAt3n9dK9uAYvI+XGlutwuTq/wfj4xCBaZCqwwVIGtD7D6ViihEbyYZrDHIHTDE3Q6oL3/hqmAyFEy9DQ==}
     dependencies:
       '@babel/parser': 7.25.6
-      '@vue/shared': 3.5.3
+      '@vue/shared': 3.5.4
       entities: 4.5.0
       estree-walker: 2.0.2
       source-map-js: 1.2.1
     dev: false
 
-  /@vue/compiler-dom@3.5.3:
-    resolution: {integrity: sha512-wnzFArg9zpvk/811CDOZOadJRugf1Bgl/TQ3RfV4nKfSPok4hi0w10ziYUQR6LnnBAUlEXYLUfZ71Oj9ds/+QA==}
+  /@vue/compiler-dom@3.5.4:
+    resolution: {integrity: sha512-yP9RRs4BDLOLfldn6ah+AGCNovGjMbL9uHvhDHf5wan4dAHLnFGOkqtfE7PPe4HTXIqE7l/NILdYw53bo1C8jw==}
     dependencies:
-      '@vue/compiler-core': 3.5.3
-      '@vue/shared': 3.5.3
+      '@vue/compiler-core': 3.5.4
+      '@vue/shared': 3.5.4
     dev: false
 
-  /@vue/compiler-sfc@3.5.3:
-    resolution: {integrity: sha512-P3uATLny2tfyvMB04OQFe7Sczteno7SLFxwrOA/dw01pBWQHB5HL15a8PosoNX2aG/EAMGqnXTu+1LnmzFhpTQ==}
+  /@vue/compiler-sfc@3.5.4:
+    resolution: {integrity: sha512-P+yiPhL+NYH7m0ZgCq7AQR2q7OIE+mpAEgtkqEeH9oHSdIRvUO+4X6MPvblJIWcoe4YC5a2Gdf/RsoyP8FFiPQ==}
     dependencies:
       '@babel/parser': 7.25.6
-      '@vue/compiler-core': 3.5.3
-      '@vue/compiler-dom': 3.5.3
-      '@vue/compiler-ssr': 3.5.3
-      '@vue/shared': 3.5.3
+      '@vue/compiler-core': 3.5.4
+      '@vue/compiler-dom': 3.5.4
+      '@vue/compiler-ssr': 3.5.4
+      '@vue/shared': 3.5.4
       estree-walker: 2.0.2
       magic-string: 0.30.11
       postcss: 8.4.45
       source-map-js: 1.2.1
     dev: false
 
-  /@vue/compiler-ssr@3.5.3:
-    resolution: {integrity: sha512-F/5f+r2WzL/2YAPl7UlKcJWHrvoZN8XwEBLnT7S4BXwncH25iDOabhO2M2DWioyTguJAGavDOawejkFXj8EM1w==}
+  /@vue/compiler-ssr@3.5.4:
+    resolution: {integrity: sha512-acESdTXsxPnYr2C4Blv0ggx5zIFMgOzZmYU2UgvIff9POdRGbRNBHRyzHAnizcItvpgerSKQbllUc9USp3V7eg==}
     dependencies:
-      '@vue/compiler-dom': 3.5.3
-      '@vue/shared': 3.5.3
+      '@vue/compiler-dom': 3.5.4
+      '@vue/shared': 3.5.4
     dev: false
 
-  /@vue/reactivity@3.5.3:
-    resolution: {integrity: sha512-2w61UnRWTP7+rj1H/j6FH706gRBHdFVpIqEkSDAyIpafBXYH8xt4gttstbbCWdU3OlcSWO8/3mbKl/93/HSMpw==}
+  /@vue/reactivity@3.5.4:
+    resolution: {integrity: sha512-HKKbEuP7tYSGCq4e4nK6ZW6l5hyG66OUetefBp4budUyjvAYsnQDf+bgFzg2RAgnH0CInyqXwD9y47jwJEHrQw==}
     dependencies:
-      '@vue/shared': 3.5.3
+      '@vue/shared': 3.5.4
     dev: false
 
-  /@vue/runtime-core@3.5.3:
-    resolution: {integrity: sha512-5b2AQw5OZlmCzSsSBWYoZOsy75N4UdMWenTfDdI5bAzXnuVR7iR8Q4AOzQm2OGoA41xjk53VQKrqQhOz2ktWaw==}
+  /@vue/runtime-core@3.5.4:
+    resolution: {integrity: sha512-f3ek2sTA0AFu0n+w+kCtz567Euqqa3eHewvo4klwS7mWfSj/A+UmYTwsnUFo35KeyAFY60JgrCGvEBsu1n/3LA==}
     dependencies:
-      '@vue/reactivity': 3.5.3
-      '@vue/shared': 3.5.3
+      '@vue/reactivity': 3.5.4
+      '@vue/shared': 3.5.4
     dev: false
 
-  /@vue/runtime-dom@3.5.3:
-    resolution: {integrity: sha512-wPR1DEGc3XnQ7yHbmkTt3GoY0cEnVGQnARRdAkDzZ8MbUKEs26gogCQo6AOvvgahfjIcnvWJzkZArQ1fmWjcSg==}
+  /@vue/runtime-dom@3.5.4:
+    resolution: {integrity: sha512-ofyc0w6rbD5KtjhP1i9hGOKdxGpvmuB1jprP7Djlj0X7R5J/oLwuNuE98GJ8WW31Hu2VxQHtk/LYTAlW8xrJdw==}
     dependencies:
-      '@vue/reactivity': 3.5.3
-      '@vue/runtime-core': 3.5.3
-      '@vue/shared': 3.5.3
+      '@vue/reactivity': 3.5.4
+      '@vue/runtime-core': 3.5.4
+      '@vue/shared': 3.5.4
       csstype: 3.1.3
     dev: false
 
-  /@vue/server-renderer@3.5.3(vue@3.5.3):
-    resolution: {integrity: sha512-28volmaZVG2PGO3V3+gBPKoSHvLlE8FGfG/GKXKkjjfxLuj/50B/0OQGakM/g6ehQeqCrZYM4eHC4Ks48eig1Q==}
+  /@vue/server-renderer@3.5.4(vue@3.5.4):
+    resolution: {integrity: sha512-FbjV6DJLgKRetMYFBA1UXCroCiED/Ckr53/ba9wivyd7D/Xw9fpo0T6zXzCnxQwyvkyrL7y6plgYhWhNjGxY5g==}
     peerDependencies:
-      vue: 3.5.3
+      vue: 3.5.4
     dependencies:
-      '@vue/compiler-ssr': 3.5.3
-      '@vue/shared': 3.5.3
-      vue: 3.5.3(typescript@5.4.5)
+      '@vue/compiler-ssr': 3.5.4
+      '@vue/shared': 3.5.4
+      vue: 3.5.4(typescript@5.4.5)
     dev: false
 
-  /@vue/shared@3.5.3:
-    resolution: {integrity: sha512-Jp2v8nylKBT+PlOUjun2Wp/f++TfJVFjshLzNtJDdmFJabJa7noGMncqXRM1vXGX+Yo2V7WykQFNxusSim8SCA==}
+  /@vue/shared@3.5.4:
+    resolution: {integrity: sha512-L2MCDD8l7yC62Te5UUyPVpmexhL9ipVnYRw9CsWfm/BGRL5FwDX4a25bcJ/OJSD3+Hx+k/a8LDKcG2AFdJV3BA==}
     dev: false
 
   /@webassemblyjs/ast@1.12.1:
@@ -5088,7 +5116,7 @@ packages:
       humanize-ms: 1.2.1
     dev: false
 
-  /ai@3.3.28(react@18.3.1)(svelte@4.2.19)(vue@3.5.3)(zod@3.23.8):
+  /ai@3.3.28(react@18.3.1)(svelte@4.2.19)(vue@3.5.4)(zod@3.23.8):
     resolution: {integrity: sha512-ogrsMscar8oXa4nTEcnjvb37cs0UJ7AxVga/642BQGkGBevnKhS0hbnXEOUKmlWcny/xRuWQ3GaXA3u9CxhfhQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -5115,7 +5143,7 @@ packages:
       '@ai-sdk/solid': 0.0.44(zod@3.23.8)
       '@ai-sdk/svelte': 0.0.46(svelte@4.2.19)(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.41(zod@3.23.8)
-      '@ai-sdk/vue': 0.0.46(vue@3.5.3)(zod@3.23.8)
+      '@ai-sdk/vue': 0.0.46(vue@3.5.4)(zod@3.23.8)
       '@opentelemetry/api': 1.9.0
       eventsource-parser: 1.1.2
       json-schema: 0.4.0
@@ -5624,8 +5652,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001658
-      electron-to-chromium: 1.5.18
+      caniuse-lite: 1.0.30001660
+      electron-to-chromium: 1.5.20
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.3)
     dev: true
@@ -5704,8 +5732,8 @@ packages:
   /caniuse-lite@1.0.30001642:
     resolution: {integrity: sha512-3XQ0DoRgLijXJErLSl+bLnJ+Et4KqV1PY6JJBGAFlsNsz31zeAIncyeZfLCabHK/jtSh+671RM9YMldxjUPZtA==}
 
-  /caniuse-lite@1.0.30001658:
-    resolution: {integrity: sha512-N2YVqWbJELVdrnsW5p+apoQyYt51aBMSsBZki1XZEfeBCexcM/sf4xiAHcXQBkuOwJBXtWF7aW1sYX6tKebPHw==}
+  /caniuse-lite@1.0.30001660:
+    resolution: {integrity: sha512-GacvNTTuATm26qC74pt+ad1fW15mlQ/zuTzzY1ZoIzECTP8HURDfF43kNxPgf7H1jmelCBQTTbBNxdSXOA7Bqg==}
     dev: true
 
   /case-sensitive-paths-webpack-plugin@2.4.0:
@@ -6478,8 +6506,8 @@ packages:
   /electron-to-chromium@1.4.827:
     resolution: {integrity: sha512-VY+J0e4SFcNfQy19MEoMdaIcZLmDCprqvBtkii1WTCTQHpRvf5N8+3kTYCgL/PcntvwQvmMJWTuDPsq+IlhWKQ==}
 
-  /electron-to-chromium@1.5.18:
-    resolution: {integrity: sha512-1OfuVACu+zKlmjsNdcJuVQuVE61sZOLbNM4JAQ1Rvh6EOj0/EUKhMJjRH73InPlXSh8HIJk1cVZ8pyOV/FMdUQ==}
+  /electron-to-chromium@1.5.20:
+    resolution: {integrity: sha512-74mdl6Fs1HHzK9SUX4CKFxAtAe3nUns48y79TskHNAG6fGOlLfyKA4j855x+0b5u8rWJIrlaG9tcTPstMlwjIw==}
     dev: true
 
   /elliptic@6.5.5:
@@ -8403,60 +8431,69 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /langchain@0.2.10:
-    resolution: {integrity: sha512-i0fC+RlX/6w6HKPWL3N5zrhrkijvpe2Xu4t/qbWzq4uFf8WBfPwmNFom3RtO2RatuPnHLm8mViU6nw8YBDiVwA==}
+  /langchain@0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23):
+    resolution: {integrity: sha512-7+5Y2FsdjlUBKJf1N+MyHn1PrGZQ9m87l3du7IeH4RiQp4j8Bz7mGV+Bjhr8FEXFjo85zLrbnpsN87pZCstubA==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@aws-sdk/client-s3': ^3.310.0
-      '@aws-sdk/client-sagemaker-runtime': ^3.310.0
-      '@aws-sdk/client-sfn': ^3.310.0
-      '@aws-sdk/credential-provider-node': ^3.388.0
-      '@azure/storage-blob': ^12.15.0
+      '@aws-sdk/client-s3': '*'
+      '@aws-sdk/client-sagemaker-runtime': '*'
+      '@aws-sdk/client-sfn': '*'
+      '@aws-sdk/credential-provider-node': '*'
+      '@azure/storage-blob': '*'
       '@browserbasehq/sdk': '*'
-      '@gomomento/sdk': ^1.51.1
-      '@gomomento/sdk-core': ^1.51.1
+      '@gomomento/sdk': '*'
+      '@gomomento/sdk-core': '*'
       '@gomomento/sdk-web': ^1.51.1
-      '@mendable/firecrawl-js': ^0.0.13
-      '@notionhq/client': ^2.2.10
+      '@langchain/anthropic': '*'
+      '@langchain/aws': '*'
+      '@langchain/cohere': '*'
+      '@langchain/community': '*'
+      '@langchain/google-genai': '*'
+      '@langchain/google-vertexai': '*'
+      '@langchain/groq': '*'
+      '@langchain/mistralai': '*'
+      '@langchain/ollama': '*'
+      '@mendable/firecrawl-js': '*'
+      '@notionhq/client': '*'
       '@pinecone-database/pinecone': '*'
-      '@supabase/supabase-js': ^2.10.0
-      '@vercel/kv': ^0.2.3
-      '@xata.io/client': ^0.28.0
-      apify-client: ^2.7.1
-      assemblyai: ^4.0.0
+      '@supabase/supabase-js': '*'
+      '@vercel/kv': '*'
+      '@xata.io/client': '*'
+      apify-client: '*'
+      assemblyai: '*'
       axios: '*'
-      cheerio: ^1.0.0-rc.12
+      cheerio: '*'
       chromadb: '*'
-      convex: ^1.3.1
-      couchbase: ^4.3.0
-      d3-dsv: ^2.0.0
-      epub2: ^3.0.1
+      convex: '*'
+      couchbase: '*'
+      d3-dsv: '*'
+      epub2: '*'
       faiss-node: '*'
       fast-xml-parser: '*'
       handlebars: ^4.7.8
-      html-to-text: ^9.0.5
-      ignore: ^5.2.0
-      ioredis: ^5.3.2
+      html-to-text: '*'
+      ignore: '*'
+      ioredis: '*'
       jsdom: '*'
-      mammoth: ^1.6.0
-      mongodb: '>=5.2.0'
+      mammoth: '*'
+      mongodb: '*'
       node-llama-cpp: '*'
-      notion-to-md: ^3.1.0
-      officeparser: ^4.0.4
-      pdf-parse: 1.1.1
+      notion-to-md: '*'
+      officeparser: '*'
+      pdf-parse: '*'
       peggy: ^3.0.2
-      playwright: ^1.32.1
-      puppeteer: ^19.7.2
-      pyodide: ^0.24.1
-      redis: ^4.6.4
-      sonix-speech-recognition: ^2.1.1
-      srt-parser-2: ^1.2.3
-      typeorm: ^0.3.20
+      playwright: '*'
+      puppeteer: '*'
+      pyodide: '>=0.24.1 <0.27.0'
+      redis: '*'
+      sonix-speech-recognition: '*'
+      srt-parser-2: '*'
+      typeorm: '*'
       weaviate-ts-client: '*'
-      web-auth-library: ^1.0.3
-      ws: ^8.14.2
-      youtube-transcript: ^1.0.6
-      youtubei.js: ^9.1.0
+      web-auth-library: '*'
+      ws: '*'
+      youtube-transcript: '*'
+      youtubei.js: '*'
     peerDependenciesMeta:
       '@aws-sdk/client-s3':
         optional: true
@@ -8475,6 +8512,24 @@ packages:
       '@gomomento/sdk-core':
         optional: true
       '@gomomento/sdk-web':
+        optional: true
+      '@langchain/anthropic':
+        optional: true
+      '@langchain/aws':
+        optional: true
+      '@langchain/cohere':
+        optional: true
+      '@langchain/community':
+        optional: true
+      '@langchain/google-genai':
+        optional: true
+      '@langchain/google-vertexai':
+        optional: true
+      '@langchain/groq':
+        optional: true
+      '@langchain/mistralai':
+        optional: true
+      '@langchain/ollama':
         optional: true
       '@mendable/firecrawl-js':
         optional: true
@@ -8559,16 +8614,16 @@ packages:
       youtubei.js:
         optional: true
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
-      '@langchain/openai': 0.2.10(langchain@0.2.10)
-      '@langchain/textsplitters': 0.0.3(langchain@0.2.10)
+      '@langchain/community': 0.2.20(@langchain/google-genai@0.0.23)(@langchain/langgraph@0.2.2)(duck-duck-scrape@2.2.5)
+      '@langchain/core': 0.2.32(langchain@0.2.18)
+      '@langchain/google-genai': 0.0.23(langchain@0.2.18)(zod@3.23.8)
+      '@langchain/openai': 0.2.10(langchain@0.2.18)
+      '@langchain/textsplitters': 0.0.3(langchain@0.2.18)
       binary-extensions: 2.3.0
       js-tiktoken: 1.0.12
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
-      langchainhub: 0.0.11
-      langsmith: 0.1.39(@langchain/core@0.2.17)(langchain@0.2.10)
-      ml-distance: 4.0.1
+      langsmith: 0.1.54(@langchain/core@0.2.32)(langchain@0.2.18)
       openapi-types: 12.1.3
       p-retry: 4.6.2
       uuid: 10.0.0
@@ -8580,11 +8635,7 @@ packages:
       - openai
     dev: false
 
-  /langchainhub@0.0.11:
-    resolution: {integrity: sha512-WnKI4g9kU2bHQP136orXr2bcRdgz9iiTBpTN0jWt9IlScUKnJBoD0aa2HOzHURQKeQDnt2JwqVmQ6Depf5uDLQ==}
-    dev: false
-
-  /langsmith@0.1.39(@langchain/core@0.2.17)(langchain@0.2.10):
+  /langsmith@0.1.39(@langchain/core@0.2.17)(langchain@0.2.18):
     resolution: {integrity: sha512-K2/qbc96JhrZbSL74RbZ0DBOpTB9Mxicu8RQrZ88Xsp1bH2O3+y5EdcvC0g/1YzQWQhcQ4peknCA24c3VTNiNA==}
     peerDependencies:
       '@langchain/core': '*'
@@ -8598,16 +8649,16 @@ packages:
       openai:
         optional: true
     dependencies:
-      '@langchain/core': 0.2.17(langchain@0.2.10)
+      '@langchain/core': 0.2.17(langchain@0.2.18)
       '@types/uuid': 9.0.8
       commander: 10.0.1
-      langchain: 0.2.10
+      langchain: 0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23)
       p-queue: 6.6.2
       p-retry: 4.6.2
       uuid: 9.0.1
     dev: false
 
-  /langsmith@0.1.51(@langchain/core@0.2.31)(langchain@0.2.10)(openai@4.58.1):
+  /langsmith@0.1.51(@langchain/core@0.2.31)(langchain@0.2.18)(openai@4.58.1):
     resolution: {integrity: sha512-TYauaTfEO5o5oCbZZvWHWg/0SiWp6DH2tYmIdGlMO0Dx6wp7uQdlGwiCcuDX+lITtLyFaraWQc8SjUwvfJ75Gw==}
     peerDependencies:
       '@langchain/core': '*'
@@ -8621,11 +8672,35 @@ packages:
       openai:
         optional: true
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.10)(openai@4.58.1)
+      '@langchain/core': 0.2.31(langchain@0.2.18)(openai@4.58.1)
       '@types/uuid': 10.0.0
       commander: 10.0.1
-      langchain: 0.2.10
+      langchain: 0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23)
       openai: 4.58.1(zod@3.23.8)
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      semver: 7.6.3
+      uuid: 10.0.0
+    dev: false
+
+  /langsmith@0.1.54(@langchain/core@0.2.32)(langchain@0.2.18):
+    resolution: {integrity: sha512-VTPCzHQGHwJ2gzYLSqm8bYjgkRetAeNzUNB8UNXEd+vHbXA8l3SjThnTVbJMpb+gQgpJWlT9lEyH3WsAK+JyCg==}
+    peerDependencies:
+      '@langchain/core': '*'
+      langchain: '*'
+      openai: '*'
+    peerDependenciesMeta:
+      '@langchain/core':
+        optional: true
+      langchain:
+        optional: true
+      openai:
+        optional: true
+    dependencies:
+      '@langchain/core': 0.2.32(langchain@0.2.18)
+      '@types/uuid': 10.0.0
+      commander: 10.0.1
+      langchain: 0.2.18(@langchain/community@0.2.20)(@langchain/google-genai@0.0.23)
       p-queue: 6.6.2
       p-retry: 4.6.2
       semver: 7.6.3
@@ -11045,12 +11120,12 @@ packages:
     resolution: {integrity: sha512-LqVcOHSB4cPGgitD1riJ1Hh4vdmITOp+BkmfmXRh4hSF/t7EnS4iD+SOTmq7w5pPm/SiPeto4ADbKS6dHUDWFA==}
     dev: false
 
-  /swrv@1.0.4(vue@3.5.3):
+  /swrv@1.0.4(vue@3.5.4):
     resolution: {integrity: sha512-zjEkcP8Ywmj+xOJW3lIT65ciY/4AL4e/Or7Gj0MzU3zBJNMdJiT8geVZhINavnlHRMMCcJLHhraLTAiDOTmQ9g==}
     peerDependencies:
       vue: '>=3.2.26 < 4'
     dependencies:
-      vue: 3.5.3(typescript@5.4.5)
+      vue: 3.5.4(typescript@5.4.5)
     dev: false
 
   /tailwind-merge@2.3.0:
@@ -11627,19 +11702,19 @@ packages:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
     dev: true
 
-  /vue@3.5.3(typescript@5.4.5):
-    resolution: {integrity: sha512-xvRbd0HpuLovYbOHXRHlSBsSvmUJbo0pzbkKTApWnQGf3/cu5Z39mQeA5cZdLRVIoNf3zI6MSoOgHUT5i2jO+Q==}
+  /vue@3.5.4(typescript@5.4.5):
+    resolution: {integrity: sha512-3yAj2gkmiY+i7+22A1PWM+kjOVXjU74UPINcTiN7grIVPyFFI0lpGwHlV/4xydDmobaBn7/xmi+YG8HeSlCTcg==}
     peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
       typescript:
         optional: true
     dependencies:
-      '@vue/compiler-dom': 3.5.3
-      '@vue/compiler-sfc': 3.5.3
-      '@vue/runtime-dom': 3.5.3
-      '@vue/server-renderer': 3.5.3(vue@3.5.3)
-      '@vue/shared': 3.5.3
+      '@vue/compiler-dom': 3.5.4
+      '@vue/compiler-sfc': 3.5.4
+      '@vue/runtime-dom': 3.5.4
+      '@vue/server-renderer': 3.5.4(vue@3.5.4)
+      '@vue/shared': 3.5.4
       typescript: 5.4.5
     dev: false
 

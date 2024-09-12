@@ -11,9 +11,9 @@ import { z } from "zod";
 import { RunnableLike, RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { ModelConfig } from "./chat";
-import { AIMessageChunk, HumanMessage } from "@langchain/core/messages";
+import { AIMessageChunk } from "@langchain/core/messages";
 import { StringPromptValueInterface } from "@langchain/core/prompt_values";
-import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
+// import { Annotation, END, MessagesAnnotation, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -184,109 +184,137 @@ export const generateRecipe = async (query: string, config: ModelConfig) => {
 };
 
 // Usando LangGraph
-export const generateTranslatedText = async (fromLang: string, toLang: string, input: string, config: ModelConfig) => {
-  try {
-    const StateAnnotation = Annotation.Root({
-      input: Annotation<string>({
-        reducer: (x, y) => y ?? x ?? ""
-      }),
-      fromLang: Annotation<string>({
-        reducer: (x, y) => y ?? x ?? ""
-      }),
-      toLang: Annotation<string>({
-        reducer: (x, y) => y ?? x ?? ""
-      })
-    });
+// export const generateTranslatedText = async (fromLang: string, toLang: string, input: string, config: ModelConfig) => {
+//   // try {
+//   // const StateAnnotation = Annotation.Root({
+//   //   input: Annotation<string>({
+//   //     reducer: (x, y) => y ?? x ?? ""
+//   //   }),
+//   //   fromLang: Annotation<string>({
+//   //     reducer: (x, y) => y ?? x ?? ""
+//   //   }),
+//   //   toLang: Annotation<string>({
+//   //     reducer: (x, y) => y ?? x ?? ""
+//   //   })
+//   // });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const callModel = async (state: typeof StateAnnotation.State) => {
-      console.log("STATE [CALL MODEL]:", state);
+//   // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   // const callModel = async (state: typeof StateAnnotation.State) => {
+//   //   console.log("STATE [CALL MODEL]:", state);
 
-      const promptTemplate = PromptTemplate.fromTemplate(`
-        Actua como un traductor profesional. Tu misión es traducir el texto de un idioma a otro.
-        El idioma de origen es: {fromLang} y debes config?: RunnableConfigtraducirlo al idioma: {toLang}
-        El texto a traducir es: {input}
-  
-        Instrucciones:
-        - Traduce el texto al idioma de destino.
-        - Manten la coherencia en la traducción.
-        - No agregues información adicional.
-        - No omitas información.
-        - La traducción debe ser precisa.
-      `);
-      const model = getModel(config);
+//   //   const promptTemplate = PromptTemplate.fromTemplate(`
+//   //     Actua como un traductor profesional. Tu misión es traducir el texto de un idioma a otro.
+//   //     El idioma de origen es: {fromLang} y debes config?: RunnableConfigtraducirlo al idioma: {toLang}
+//   //     El texto a traducir es: {input}
 
-      const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
-      const result: AIMessageChunk | string = await chain.invoke({
-        input: input,
-        fromLang: fromLang,
-        toLang: toLang
-      });
+//   //     Instrucciones:
+//   //     - Traduce el texto al idioma de destino.
+//   //     - Manten la coherencia en la traducción.
+//   //     - No agregues información adicional.
+//   //     - No omitas información.
+//   //     - La traducción debe ser precisa.
+//   //   `);
+//   //   const model = getModel(config);
 
-      console.log("result", result);
+//   //   const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
+//   //   const result: AIMessageChunk | string = await chain.invoke({
+//   //     input: input,
+//   //     fromLang: fromLang,
+//   //     toLang: toLang
+//   //   });
 
-      return {
-        input: result.content as string,
-        fromLang: fromLang,
-        toLang: toLang
-      };
-    };
+//   //   console.log("result", result);
 
-    const verifyTranslation = async (state: typeof StateAnnotation.State) => {
-      const promptTemplate = PromptTemplate.fromTemplate(`
-        Actua como un corrector de traducciones. Tu misión es verificar la traducción realizada por un traductor.
-        La traducción realizada es: {input}
-        Verifica la traducción y corrige cualquier error que encuentres.
-        El idioma de origen es: {fromLang} y el idioma de destino es: {toLang}
-  
-        Instrucciones:
-        - Corrige cualquier error en la traducción.
-        - Manten la coherencia en la traducción.
-        - No agregues información adicional.
-        - No omitas información.
-        - La traducción debe ser precisa.
-      `);
+//   //   return {
+//   //     input: result.content as string,
+//   //     fromLang: fromLang,
+//   //     toLang: toLang
+//   //   };
+//   // };
 
-      const model = getModel(config);
-      const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
+//   // const verifyTranslation = async (state: typeof StateAnnotation.State) => {
+//   //   const promptTemplate = PromptTemplate.fromTemplate(`
+//   //     Actua como un corrector de traducciones. Tu misión es verificar la traducción realizada por un traductor.
+//   //     La traducción realizada es: {input}
+//   //     Verifica la traducción y corrige cualquier error que encuentres.
+//   //     El idioma de origen es: {fromLang} y el idioma de destino es: {toLang}
 
-      const result: AIMessageChunk | string = await chain.invoke({
-        input: state.input,
-        fromLang: state.fromLang,
-        toLang: state.toLang
-      });
+//   //     Instrucciones:
+//   //     - Corrige cualquier error en la traducción.
+//   //     - Manten la coherencia en la traducción.
+//   //     - No agregues información adicional.
+//   //     - No omitas información.
+//   //     - La traducción debe ser precisa.
+//   //   `);
 
-      return {
-        input: result.content as string
-      };
-    };
+//   //   const model = getModel(config);
+//   //   const chain = promptTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
 
-    const workflow = new StateGraph(StateAnnotation)
-      .addNode("Agent", callModel)
-      .addEdge(START, "Agent")
-      .addNode("Verify", verifyTranslation)
-      .addEdge("Agent", "Verify")
-      .addEdge("Verify", END);
+//   //   const result: AIMessageChunk | string = await chain.invoke({
+//   //     input: state.input,
+//   //     fromLang: state.fromLang,
+//   //     toLang: state.toLang
+//   //   });
 
-    const graph = workflow.compile();
+//   //   return {
+//   //     input: result.content as string
+//   //   };
+//   // };
 
-    const inputs = {
-      messages: [new HumanMessage(`
-        Traduce el siguiente texto del idioma ${fromLang} al idioma ${toLang}: ${input}
-      `)]
-    };
+//   // const StateAnnotation = Annotation.Root({
+//   //   name: Annotation<string>({
+//   //     reducer: (x, y) => y ?? x ?? ""
+//   //   }),
+//   //   isHuman: Annotation<boolean>({
+//   //     reducer: (x, y) => y ?? x ?? false
+//   //   })
+//   // });
 
-    for await (
-      const { input } of await graph.stream(inputs, {
-        streamMode: "values"
-      })
-    ) {
-      const translatedText = input;
-      console.log("translatedText", translatedText);
 
-    }
-  } catch (error) {
-    console.log('HA OCURRIDO UN ERROR', error);
+//   //Initialise the LangGraph
+//   // const workflow = new StateGraph(MessagesAnnotation)
+//   //   .addNode("sayHello", sayHello)
+//   //   .addNode("sayBye", sayBye)
+//   //   .addEdge(START, "sayHello")
+//   //   .addEdge("sayHello", "sayBye")
+//   //   .addEdge("sayBye", END);
 
-  };
-};
+
+
+//   // const workflow = new StateGraph(StateAnnotation)
+//   //   .addNode("Agent", callModel)
+//   //   .addEdge(START, "Agent")
+//   //   .addNode("Verify", verifyTranslation)
+//   //   .addEdge("Agent", "Verify")
+//   //   .addEdge("Verify", END);
+
+//   // const graph = workflow.compile();
+
+//   // const inputs = {
+//   //   messages: [new HumanMessage(`
+//   //     Traduce el siguiente texto del idioma ${fromLang} al idioma ${toLang}: ${input}
+//   //   `)]
+//   // };
+
+//   // for await (
+//   //   const { input } of await graph.stream(inputs, {
+//   //     streamMode: "values"
+//   //   })
+//   // ) {
+//   //   const translatedText = input;
+//   //   console.log("translatedText", translatedText);
+
+//   // }
+//   // } catch (error) {
+//   //   console.log('HA OCURRIDO UN ERROR', error);
+
+//   // };
+// };
+
+
+// // const finalState = await app.invoke({
+// //   messages: [new HumanMessage("what is the weather in sf")]
+// });
+
+// console.log("finalState", finalState);
+
