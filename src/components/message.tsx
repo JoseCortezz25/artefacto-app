@@ -65,8 +65,8 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
               <div className="flex gap-2 justify-between">
                 <nav className="flex gap-2">
                   <Button variant="ghost" onClick={onCopy}>
-                    <CopyIcon className="size-[16px] mr-2" />
-                    Copiar respuesta
+                    <CopyIcon className="size-[16px] sm:mr-2" />
+                    <span className="hidden sm:flex">Copiar respuesta</span>
                   </Button>
                 </nav>
               </div>

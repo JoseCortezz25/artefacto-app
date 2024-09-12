@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header = ({ title }: HeaderProps) => {
   return (
-    <header className="w-full py-4 bg-white/90 sticky top-0 backdrop-blur-md px-2 sm:px-4 lg:px-4 dark:bg-[#212121]">
+    <header className="w-full py-4 bg-white/90 sticky top-0 z-4 backdrop-blur-md px-2 sm:px-4 lg:px-4 dark:bg-[#212121]">
       <div className="mx-auto max-w-[1424px] flex items-center justify-between">
         <nav>
           <span className="text-[20px] font-bold flex items-center">Artefacto <Badge className="ml-2">Beta</Badge></span>
