@@ -8,12 +8,12 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { WeatherGeneral } from "@/components/weather-card";
 import { z } from "zod";
-import { RunnableLike, RunnableSequence } from "@langchain/core/runnables";
+import { RunnableConfig, RunnableLike, RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { ModelConfig } from "./chat";
 import { AIMessageChunk } from "@langchain/core/messages";
 import { StringPromptValueInterface } from "@langchain/core/prompt_values";
-// import { Annotation, END, MessagesAnnotation, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
+import { Annotation, END, MessagesAnnotation, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -44,7 +44,7 @@ const getCreativity = (creativity: Creativity | number) => {
   }
 };
 
-const getModel = (config: ModelConfig): ChatOpenAI<ChatOpenAICallOptions> | ChatGoogleGenerativeAI => {
+export const getModel = (config: ModelConfig): ChatOpenAI<ChatOpenAICallOptions> | ChatGoogleGenerativeAI => {
   if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
     const model = new ChatOpenAI({
       model: config.model,
@@ -180,6 +180,197 @@ export const generateRecipe = async (query: string, config: ModelConfig) => {
   });
 
   return response;
+};
+
+export const generateTranslatedText = async (fromLang: string, toLang: string, input: string, config: ModelConfig) => {
+  const TranslatorGraphState = Annotation.Root({
+    fromLang: Annotation<string>,
+    toLang: Annotation<string>,
+    input: Annotation<string>,
+    result: Annotation<string>({
+      reducer: (oldValue: string, newValue: string) => {
+        return newValue;
+      }
+    })
+  });
+
+  console.group("TRANSLATOR GRAPH STATE");
+  console.log("fromLang", fromLang);
+  console.log("toLang", toLang);
+  console.log("input", input);
+  console.groupEnd();
+
+  const model = getModel(config);
+
+  const translator = async (state: typeof TranslatorGraphState.State, config?: RunnableConfig
+  ): Promise<Partial<typeof TranslatorGraphState.State>> => {
+    const { fromLang, toLang, input } = state;
+
+    const chain = RunnableSequence.from([
+      PromptTemplate.fromTemplate(`
+        Translate the text from {fromLang} to {toLang}.
+        This is the text: {input}
+      `),
+      model
+    ]);
+
+    const response = await chain.invoke({ fromLang, toLang, input, config });
+    console.log("RESULT - TRANSLATING", response);
+    return { result: response.content as string };
+  };
+
+  const reviewer = async (state: typeof TranslatorGraphState.State, config?: RunnableConfig
+  ): Promise<Partial<typeof TranslatorGraphState.State>> => {
+    const { fromLang, toLang, result } = state;
+    const chain = RunnableSequence.from([
+      PromptTemplate.fromTemplate(`
+        Review the translation of the text from {fromLang} to {toLang}.
+        This is the translated text: {result}
+      `),
+      model
+    ]);
+
+    const response = await chain.invoke({ fromLang, toLang, result }, config);
+    console.log("RESULT - REVIEWERING", response);
+
+
+    // const promptReviewerTemplate = PromptTemplate.fromTemplate("Review the translation of the text from {fromLang} to {toLang}: {input}");
+    // const chain = promptReviewerTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
+    // console.log("CHAIN", chain);
+
+    // const modelResult = await chain.invoke({ fromLang, toLang, input });
+    // console.log("RESULT - REVIEWERING", modelResult);
+    return { result: response.content as string };
+  };
+
+  const builder = new StateGraph(TranslatorGraphState)
+    .addNode("translator", translator)
+    .addNode("reviewer", reviewer)
+    .addEdge(START, "translator")
+    .addEdge("translator", "reviewer")
+    .addEdge("reviewer", END);
+
+  const agent = builder.compile();
+  console.log("AGENT", agent);
+  return agent;
+};
+
+
+interface IState {
+  fromLang: string;
+  toLang: string;
+  input: string;
+  output: string;
+}
+
+export const getDummyAgent = async (fromLang: string, toLang: string, input: string, config: ModelConfig) => {
+
+  const graphState: StateGraphArgs<IState>["channels"] = {
+    fromLang: {
+      reducer: (x, y) => y ?? x ?? ""
+    },
+    toLang: {
+      reducer: (x, y) => y ?? x ?? ""
+    },
+    input: {
+      reducer: (x, y) => y ?? x ?? ""
+    },
+    output: {
+      reducer: (x, y) => y ?? x ?? ""
+    }
+  };
+  // const InputAnnotation = Annotation.Root({
+  //   fromLang: Annotation<string>({
+  //     value: (x?: string, y?: string) => y ?? x ?? "",
+  //     default: () => ""
+  //   }),
+  //   toLang: Annotation<string>({
+  //     value: (x?: string, y?: string) => y ?? x ?? "",
+  //     default: () => ""
+  //   }),
+  //   originalText: Annotation<string>({
+  //     value: (x?: string, y?: string) => y ?? x ?? "",
+  //     default: () => ""
+  //   }),
+  //   output: Annotation<string>({
+  //     value: (x?: string, y?: string) => y ?? x ?? "",
+  //     default: () => ""
+  //   })
+  // });
+
+  const OutputAnnotation = Annotation.Root({
+    translatedText: Annotation<string>({
+      value: (x?: string, y?: string) => y ?? x ?? "",
+      default: () => ""
+    })
+  });
+
+  const model = getModel(config);
+
+  const translatorNode = async (state: IState) => {
+    const promptReviewerTemplate = PromptTemplate.fromTemplate(`
+      Translate the text from {fromLang} to {toLang}.
+      This is the text: {originalText}
+    `);
+    const chain = promptReviewerTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
+    const response = await chain.invoke({
+      fromLang: state.fromLang,
+      toLang: state.toLang,
+      originalText: state.input as string
+    });
+
+    console.log("RESPONSE 1 -", response);
+
+    return {
+      ...state,
+      output: response
+    };
+  };
+
+
+  // const reviewerNode = (state: typeof InputAnnotation.State) => {
+  //   const promptReviewerTemplate = PromptTemplate.fromTemplate(`
+  //     Review the translation of the text from {fromLang} to {toLang}.
+  //     This is the translated text: {translatedText}
+  //   `);
+  //   const chain = promptReviewerTemplate.pipe(model as RunnableLike<StringPromptValueInterface, AIMessageChunk>);
+  //   const response = chain.invoke({
+  //     fromLang: state.fromLang,
+  //     toLang: state.toLang,
+  //     translatedText: state.originalText
+  //   });
+
+  //   console.log("RESPONSE 2 -", response);
+  //   return { translatedText: "hello" };
+  // };
+
+  // const graph = new StateGraph({
+  //   input: InputAnnotation,
+  //   output: OutputAnnotation
+  // })
+  const graph = new StateGraph({ channels: graphState })
+    .addNode("answerNode", translatorNode)
+    // .addNode("middleNode", reviewerNode)
+    .addEdge("__start__", "answerNode")
+    // .addEdge("answerNode", "middleNode")
+    .compile();
+
+
+  console.group("DUMMY AGENT");
+  console.log("FROM LANG", fromLang);
+  console.log("TO LANG", toLang);
+  console.log("INPUT", input);
+  console.groupEnd();
+
+  const result = await graph.invoke({
+    fromLang: fromLang,
+    toLang: toLang,
+    input: input
+  });
+
+  // console.log("RESULT", result);
+  return result;
+
 };
 
 // Usando LangGraph
