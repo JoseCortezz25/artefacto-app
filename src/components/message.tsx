@@ -74,7 +74,14 @@ const Message = ({ role = User.AI, content, badge = SourceType.NormalAnswer, isC
           )}
         </div>
       ) : (
-        children
+        <div className="flex flex-col items-start gap-2 w-full font-[500]">
+          {content && (
+            <div className={cn("mt-2", role === User.User && "font-bold")}>
+              <Preview markdown={content}></Preview>
+            </div>
+          )}
+          {children}
+        </div>
       )}
     </article>
   );

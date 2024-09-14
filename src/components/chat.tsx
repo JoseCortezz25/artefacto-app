@@ -15,6 +15,7 @@ const Chat = () => {
   const [_, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [image, setImage] = useState<string | null>(null);
 
   const scrollToBottom = () => {
     if (autoScroll) {
@@ -30,7 +31,7 @@ const Chat = () => {
 
   useEffect(scrollToBottom, [conversation]);
 
-  const handleSearch = async (e: Event) => {
+  const handleSearch = async (e: Event, image: string | undefined) => {
     e.preventDefault();
 
     const value = search.trim();
@@ -40,7 +41,13 @@ const Chat = () => {
 
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,
-      { id: generateId(), role: 'user', display: <Message role={User.User} content={value} /> }
+      {
+        id: generateId(),
+        role: 'user',
+        display: image ? <Message role={User.User} content={value} isComponent>
+          <img src={image} alt="Imagen" className="input-image-preview" />
+        </Message> : <Message role={User.User} content={value} />
+      }
     ]);
 
     const config: ModelConfig = {
@@ -49,13 +56,14 @@ const Chat = () => {
       apiKey: localStorage.getItem('apiKey') as string
     };
 
-    const message = await submitUserMessage(value, config);
+    const message = await submitUserMessage(value, config, image);
 
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,
       message
     ]);
     setLoading(false);
+    setImage(null);
   };
 
   return (
@@ -66,7 +74,6 @@ const Chat = () => {
         </div>
       ))}
         <div ref={messagesEndRef} />
-
       </div>
 
       <div>
@@ -75,8 +82,9 @@ const Chat = () => {
           value={search}
           onChange={({ target }) => setSearch(target.value)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSubmit={(e: any) => handleSearch(e)}
+          onSubmit={(e: any) => handleSearch(e, image ?? undefined)}
           variant={Steps.Chat}
+          setImage={(value) => setImage(value)}
         />
         <p className="mt-2 text-[12px] md:text-[15px] text-center text-muted-foreground text-pretty">
           Artefacto puede cometer errores. Comprueba la información importante.

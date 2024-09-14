@@ -8,8 +8,6 @@ import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { Creativity, Models, SourceType, User } from "@/lib/types";
-// import { StateGraph, START, END, Annotation, MemorySaver } from "@langchain/langgraph";
-
 import Message from "@/components/message";
 import WeatherCard from "@/components/weather-card";
 import RecipeCard from "@/components/recipe-card";
@@ -33,7 +31,7 @@ export interface ModelConfig {
   apiKey: string;
 }
 
-export async function submitUserMessage(input: string, config: ModelConfig): Promise<ClientMessage> {
+export async function submitUserMessage(input: string, config: ModelConfig, image: string): Promise<ClientMessage> {
   'use server';
   const history = getMutableAIState();
 
@@ -72,7 +70,16 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
     const result = await streamUI({
       model: getModel(),
       temperature,
-      messages: [...history.get(), { role: 'user', content: input }],
+      messages: [
+        ...history.get(),
+        {
+          role: 'user',
+          content: image ? [
+            { type: 'text', text: input },
+            { type: 'image', image: new URL(image) }
+          ] : input
+        }
+      ],
       system: `\
       Actua como un asistente personal para ayudarte a encontrar información en internet.
       El usuario puede hacer preguntas y tu como asistente responderas la información relevante.

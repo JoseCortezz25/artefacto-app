@@ -48,6 +48,8 @@ export enum Creativity {
 }
 
 export enum Models {
+  O1Preview = 'o1-preview',
+  O1mini = 'o1-mini',
   GPT4o = 'gpt-4o',
   GPT4oMini = 'gpt-4o-mini',
   Gemini15ProLatest = 'gemini-1.5-pro-latest',
