@@ -4,9 +4,6 @@
 process.env.OPENAI_API_KEY = "sk-...";
 process.env.TAVILY_API_KEY = "tvly-...";
 
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage } from "@langchain/core/messages";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { StateGraph, MessagesAnnotation } from "@langchain/langgraph";
 import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
