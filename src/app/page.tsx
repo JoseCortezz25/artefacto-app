@@ -9,7 +9,7 @@ import { Creativity, Models, Steps, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { CloudMoonIcon, Code, Earth, PawPrint } from "lucide-react";
+import { CloudMoonIcon, Code, Earth, PawPrint, Pencil } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
@@ -109,6 +109,11 @@ export default function Home() {
       label: "Explicame un ejemplo de código Python",
       icon: <Code className="size-[18px]" />,
       onClick: () => handleSearch("Explicame un ejemplo de código Python")
+    },
+    {
+      label: "Traduce 'Hola mundo' en inglés",
+      icon: <Pencil className="size-[18px] text-green-400" />,
+      onClick: () => handleSearch("Traduce 'Hola mundo' en inglés")
     }
   ];
 

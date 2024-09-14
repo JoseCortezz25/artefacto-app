@@ -3,16 +3,17 @@
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateRecipe, generateResultModel, getWeatherByCity, generateTranslatedText, getDummyAgent } from "./actions";
+import { generateRecipe, generateResultModel, getWeatherByCity, generateTranslatedText } from "./actions";
 import { z } from "zod";
 import { generateId } from 'ai';
 import { ReactNode } from "react";
 import { Creativity, Models, SourceType, User } from "@/lib/types";
-import { StateGraph, START, END, Annotation, MemorySaver } from "@langchain/langgraph";
+// import { StateGraph, START, END, Annotation, MemorySaver } from "@langchain/langgraph";
 
 import Message from "@/components/message";
 import WeatherCard from "@/components/weather-card";
 import RecipeCard from "@/components/recipe-card";
+import Translator from "@/components/translator";
 
 
 export interface ServerMessage {
@@ -194,7 +195,7 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
           }
         },
         generateTraduction: {
-          description: "Usa esta herramienta cuando necesites traducir un texto a otro idioma. Si te dan un texto y te indican el idioma a traducir, debes determinar el idioma de origen y traducirlo al idioma indicado.",
+          description: "Usa esta herramienta cuando el usuario te indique que debes traducir un texto a otro idioma. Si te dan un texto y te indican el idioma a traducir, debes determinar el idioma de origen y traducirlo al idioma indicado.",
           parameters: z.object({
             fromLang: z.string().describe('El idioma de origen del texto.'),
             toLang: z.string().describe('El idioma al que se traducirá el texto.'),
@@ -207,34 +208,25 @@ export async function submitUserMessage(input: string, config: ModelConfig): Pro
               </i>
             </Message>;
 
-            const response = await getDummyAgent(
-              fromLang,
-              toLang,
-              input,
-              config
-            );
-            console.log("-> DUMMY AGENT", response);
-
-            // const agent = await generateTranslatedText(input, fromLang, toLang, config);
-            // const result = await agent.invoke({ fromLang, toLang, input });
-
-            // console.log("-> FINAL RESULT", result);
-
-
-
+            const response = await generateTranslatedText(fromLang, toLang, input, config);
 
             history.done((messages: ServerMessage[]) => [
               ...messages,
               {
                 role: 'assistant',
-                content: `
-                El resultado de la traducción del texto ${input} de ${fromLang} a ${toLang} es:
-                ${result}.
+                content: `El resultado de la traducción del texto ${input} de ${fromLang} a ${toLang} es: ${response.content}.
                 `
               }
             ]);
 
-            return <Message role={User.AI} content={"result"} />;
+            return <Message role={User.AI} content="" isComponent>
+              <Translator
+                fromLang={fromLang}
+                toLang={toLang}
+                inputText={input}
+                translatedText={response.content as string}
+              />
+            </Message>;
           }
         }
       }

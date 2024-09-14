@@ -24,7 +24,7 @@ export default function Translator({
   };
 
   return (
-    <Card className="w-full max-w-md md:max-w-4xl bg-white rounded-3xl overflow-hidden">
+    <Card className="w-full max-w-md md:max-w-4xl bg-white dark:bg-[#2a2929] rounded-3xl overflow-hidden">
       <CardContent className="p-6">
         <div className="flex justify-center gap-5 mb-4 w-full">
           <div className="text-end">
@@ -46,13 +46,13 @@ export default function Translator({
 
         <div className="flex flex-col md:flex-row md:space-x-4">
           <div className="flex-1">
-            <div className="min-h-[100px] md:min-h-[200px] text-lg p-4 bg-gray-50 rounded-lg">
+            <div className="min-h-[100px] md:min-h-[200px] text-lg p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg">
               {inputText}
             </div>
           </div>
 
           <div className="flex-1">
-            <div className="min-h-[100px] md:min-h-[200px] text-lg p-4 bg-gray-50 rounded-lg relative">
+            <div className="min-h-[100px] md:min-h-[200px] text-lg p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg relative">
               {translatedText}
 
               <Button
