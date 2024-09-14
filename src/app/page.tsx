@@ -9,7 +9,7 @@ import { Creativity, Models, Steps, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { CloudMoonIcon, Code, Earth, PawPrint, Pencil } from "lucide-react";
+import { CloudMoonIcon, Code, PawPrint, Pencil } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
@@ -96,11 +96,6 @@ export default function Home() {
       onClick: () => handleSearch("Lista de nombres para mascotas")
     },
     {
-      label: "Preguntar las capitales",
-      icon: <Earth className="size-[18px] text-blue-400" />,
-      onClick: () => handleSearch("Preguntar las capitales")
-    },
-    {
       label: "Dime el clima de Lima",
       icon: <CloudMoonIcon className="size-[18px] text-blue-400" />,
       onClick: () => handleSearch("Dime el clima de Lima")
@@ -111,9 +106,9 @@ export default function Home() {
       onClick: () => handleSearch("Explicame un ejemplo de código Python")
     },
     {
-      label: "Traduce 'Hola mundo' en inglés",
+      label: "Traduce 'Hola mundo' en noruego",
       icon: <Pencil className="size-[18px] text-green-400" />,
-      onClick: () => handleSearch("Traduce 'Hola mundo' en inglés")
+      onClick: () => handleSearch("Traduce 'Hola mundo' al noruego")
     }
   ];
 

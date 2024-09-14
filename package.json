@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -31,7 +31,7 @@
     "dompurify": "^3.1.6",
     "duck-duck-scrape": "^2.2.5",
     "highlight.js": "^11.10.0",
-    "langchain": "^0.2.18",
+    "langchain": "^0.1.9",
     "lucide-react": "^0.372.0",
     "marked": "^14.1.0",
     "marked-highlight": "^2.1.4",
