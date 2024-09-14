@@ -24,8 +24,6 @@ export default function Home() {
   const [_image, setImage] = useState<string | null>(null);
 
   const handleSearch = async (searchValue: string, image?: string) => {
-    console.log("IMAGE PAGE: ", image);
-
     if (stepper === Steps.Search) {
       setStepper(Steps.Loading);
     }

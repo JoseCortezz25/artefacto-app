@@ -245,8 +245,6 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
     };
 
   } catch (error) {
-    console.log("ERROR", error);
-
     return {
       id: generateId(),
       role: 'assistant',
