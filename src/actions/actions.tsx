@@ -13,7 +13,6 @@ import { StructuredOutputParser } from "langchain/output_parsers";
 import { ModelConfig } from "./chat";
 import { AIMessageChunk } from "@langchain/core/messages";
 import { StringPromptValueInterface } from "@langchain/core/prompt_values";
-// import { Annotation, END, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
 
 const searchInternetTool = new DuckDuckGoSearch({
   maxResults: 5,
@@ -44,7 +43,7 @@ const getCreativity = (creativity: Creativity | number) => {
   }
 };
 
-export const getModel = (config: ModelConfig): ChatOpenAI<ChatOpenAICallOptions> | ChatGoogleGenerativeAI => {
+const getModel = (config: ModelConfig): ChatOpenAI<ChatOpenAICallOptions> | ChatGoogleGenerativeAI => {
   if (config.model === Models.GPT4o || config.model === Models.GPT4oMini) {
     const model = new ChatOpenAI({
       model: config.model,
