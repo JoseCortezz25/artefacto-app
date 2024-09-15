@@ -1,4 +1,4 @@
-import React, { useState, ChangeEventHandler, FormEvent, InputHTMLAttributes } from "react";
+import { useState, ChangeEventHandler, FormEvent, InputHTMLAttributes, SetStateAction, Dispatch, ClipboardEvent, ChangeEvent } from "react";
 import { ArrowUp, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ interface InputSearchProps extends InputHTMLAttributes<HTMLInputElement | HTMLFo
   value?: string;
   onSubmit?: (e: FormEvent<HTMLFormElement>) => Promise<void> | undefined;
   variant?: Steps;
-  setImage?: (value: string | null) => void;
+  setImage?: Dispatch<SetStateAction<string | null>>;
 }
 
 const InputSearch = ({
@@ -24,14 +24,19 @@ const InputSearch = ({
 }: InputSearchProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (onSubmit) {
+      if (imagePreview) {
+        setImage!(imagePreview);
+      }
+
       await onSubmit(e);
+      setImagePreview(null);
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     const items = e.clipboardData.items;
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf("image") !== -1) {
@@ -39,13 +44,14 @@ const InputSearch = ({
         const reader = new FileReader();
         reader.onload = (event) => {
           setImagePreview(event.target?.result as string);
+          setImage!(event.target?.result as string);
         };
         reader.readAsDataURL(blob!);
       }
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
       onChange(e);
 

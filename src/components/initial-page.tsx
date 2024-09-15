@@ -34,13 +34,6 @@ const RecommendBox = ({ label, icon, onClick }: RecommendBoxProps) => {
 
 const InitialPage = ({ recommends, onSearch, setImagePreview }: InitialPageProps) => {
   const [search, setSearch] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [image, setImage] = useState<string | null>(null);
-
-  const handleImage = (value: string | null) => {
-    setImage(value);
-    setImagePreview!(value);
-  };
 
   return (
     <section className="flex flex-col justify-between gap-4 pb-3 w-full">
@@ -62,8 +55,8 @@ const InitialPage = ({ recommends, onSearch, setImagePreview }: InitialPageProps
           className="w-full"
           value={search}
           onChange={({ target }) => setSearch(target.value)}
-          onSubmit={() => onSearch(search, image ?? undefined)}
-          setImage={(value) => handleImage(value)}
+          onSubmit={() => onSearch(search)}
+          setImage={setImagePreview}
         />
       </div>
     </section>

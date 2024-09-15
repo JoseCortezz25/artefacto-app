@@ -21,9 +21,9 @@ export default function Home() {
   const [stepper, setStepper] = useState<Steps>(Steps.Search);
   const { submitUserMessage } = useActions();
   const [_conversation, setConversation] = useUIState();
-  const [_image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
 
-  const handleSearch = async (searchValue: string, image?: string) => {
+  const handleSearch = async (searchValue: string) => {
     if (stepper === Steps.Search) {
       setStepper(Steps.Loading);
     }

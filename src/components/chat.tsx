@@ -36,6 +36,7 @@ const Chat = () => {
 
     const value = search.trim();
     setSearch('');
+    // setImage(null);
     if (!value) return;
     setLoading(true);
 
@@ -63,7 +64,6 @@ const Chat = () => {
       message
     ]);
     setLoading(false);
-    setImage(null);
   };
 
   return (

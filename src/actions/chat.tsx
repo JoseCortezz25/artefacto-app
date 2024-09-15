@@ -34,6 +34,7 @@ export interface ModelConfig {
 export async function submitUserMessage(input: string, config: ModelConfig, image: string): Promise<ClientMessage> {
   'use server';
   const history = getMutableAIState();
+  console.log("IMAGE SERVER: ", image);
 
   const getCreativity = (creativity: Creativity | number) => {
     if (creativity === Creativity.Low) {
