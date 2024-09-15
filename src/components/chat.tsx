@@ -36,7 +36,6 @@ const Chat = () => {
 
     const value = search.trim();
     setSearch('');
-    // setImage(null);
     if (!value) return;
     setLoading(true);
 

@@ -67,6 +67,13 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
     return model;
   };
 
+  const messageWithImage = [
+    { type: 'text', text: input },
+    { type: 'image', image: new URL(image) }
+  ];
+
+  const genericMessage = image ? messageWithImage : input;
+
   try {
     const result = await streamUI({
       model: getModel(),
@@ -75,10 +82,7 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
         ...history.get(),
         {
           role: 'user',
-          content: image ? [
-            { type: 'text', text: input },
-            { type: 'image', image: new URL(image) }
-          ] : input
+          content: genericMessage
         }
       ],
       system: `\
