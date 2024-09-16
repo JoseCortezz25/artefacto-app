@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import "./globals.scss";
 import { AI } from "@/actions/chat";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import "./globals.scss";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Artefacto",
-  description: "Busca en internet y encuentra lo que necesitas"
+  description: "Busca en internet y encuentra lo que necesitas",
+  metadataBase: new URL("https://artefacto-app.vercel.app/")
 };
 
 export default function RootLayout({
@@ -28,7 +29,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AI>
-
             <main>
               {children}
             </main>
