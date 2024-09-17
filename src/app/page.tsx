@@ -41,14 +41,13 @@ export default function Home() {
       setSearch("");
       setStepper(Steps.Loading);
       setTitle("");
-      setImage(null);
 
       setConversation((currentConversation: ClientMessage[]) => [
         ...currentConversation,
         {
           id: generateId(),
           role: "user",
-          display: image ? <Message role={User.User} content={value} isComponent>
+          display: !!image ? <Message role={User.User} content={value} isComponent>
             <img src={image} alt="Imagen" className="input-image-preview" />
           </Message> : <Message role={User.User} content={value} />
         }
@@ -78,13 +77,14 @@ export default function Home() {
         return;
       }
 
-      const message = await submitUserMessage(value, config, image);
+      const message = await submitUserMessage(value, config, image || "");
 
       setConversation((currentConversation: ClientMessage[]) => [
         ...currentConversation,
         message
       ]);
 
+      setImage(null);
       setStepper(Steps.Chat);
     } catch (error) {
       if (stepper === Steps.Loading) {

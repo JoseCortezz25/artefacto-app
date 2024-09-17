@@ -33,8 +33,8 @@ export interface ModelConfig {
 
 export async function submitUserMessage(input: string, config: ModelConfig, image: string): Promise<ClientMessage> {
   'use server';
+  console.log('submitUserMessage', input, config, image);
   const history = getMutableAIState();
-  console.log("IMAGE SERVER: ", image);
 
   const getCreativity = (creativity: Creativity | number) => {
     if (creativity === Creativity.Low) {
@@ -67,12 +67,10 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
     return model;
   };
 
-  const messageWithImage = [
+  const genericMessage = !!image ? [
     { type: 'text', text: input },
     { type: 'image', image: new URL(image) }
-  ];
-
-  const genericMessage = image ? messageWithImage : input;
+  ] : input;
 
   try {
     const result = await streamUI({
@@ -250,6 +248,8 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
     };
 
   } catch (error) {
+    console.log('ALGO HA FALLADO', error);
+
     return {
       id: generateId(),
       role: 'assistant',
