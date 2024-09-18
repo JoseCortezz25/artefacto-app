@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AI } from "@/actions/chat";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import { GoogleAnalytics } from '@next/third-parties/google';
 import "./globals.scss";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -36,6 +37,7 @@ export default function RootLayout({
           </AI>
         </ThemeProvider>
       </body>
+      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID as string} />
     </html>
   );
 }
