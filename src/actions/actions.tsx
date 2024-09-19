@@ -174,11 +174,10 @@ export const generateRecipe = async (query: string, config: ModelConfig) => {
     La respuesta debe ser en español.
     `);
 
-  const chain = RunnableSequence.from([
-    promptTemplate,
-    model,
-    parser
-  ]);
+  const chain = promptTemplate
+    .pipe(model as RunnableLike<StringPromptValueInterface>)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .pipe(parser as RunnableLike<any, Recipe>);
 
   const response: Recipe = await chain.invoke({
     query: query,
