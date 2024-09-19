@@ -147,6 +147,13 @@ export const getWeatherByCity = (city: string): Promise<WeatherGeneral> => {
     });
 };
 
+interface Recipe {
+  title: string;
+  ingredients: string[];
+  instructions: string[];
+  duration: string;
+}
+
 export const generateRecipe = async (query: string, config: ModelConfig) => {
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
@@ -157,21 +164,23 @@ export const generateRecipe = async (query: string, config: ModelConfig) => {
     })
   );
 
-  const model = getModel(config) as RunnableLike<OpenAICallOptions> | RunnableLike<ChatGoogleGenerativeAI>;
-
-  const chain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(`
+  const model = getModel(config) as RunnableLike<OpenAICallOptions | ChatGoogleGenerativeAI>;
+  const promptTemplate = PromptTemplate.fromTemplate(`
     Actua como un chef con 10 años de experiencia.Tu misión es generar una receta de acuerdo a la consulta del usuario.
     En internet buscarás una receta que se ajuste a la consulta del usuario y la presentarás de manera estructurada.
     Solucitud del usuario: {query}
     Este es el resultado de la busqueda: {searchResults}
     Estructura de la receta: {formatInstructions}
     La respuesta debe ser en español.
-    `),
-    model
+    `);
+
+  const chain = RunnableSequence.from([
+    promptTemplate,
+    model,
+    parser
   ]);
 
-  const response = await chain.invoke({
+  const response: Recipe = await chain.invoke({
     query: query,
     searchResults: await searchInternetTool.invoke(query),
     formatInstructions: parser.getFormatInstructions()

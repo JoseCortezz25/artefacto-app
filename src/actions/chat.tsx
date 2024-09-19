@@ -180,13 +180,14 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
               </i>
             </Message>;
 
-            const result = await generateRecipe(query, config);
+            try {
+              const result = await generateRecipe(query, config);
 
-            history.done((messages: ServerMessage[]) => [
-              ...messages,
-              {
-                role: 'assistant',
-                content: `Aquí tienes una receta de ${query}.
+              history.done((messages: ServerMessage[]) => [
+                ...messages,
+                {
+                  role: 'assistant',
+                  content: `Aquí tienes una receta de ${query}.
                 ${result.title}
                 Duración: ${result.duration}
                 
@@ -196,12 +197,15 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
                 Instrucciones:
                 ${result.instructions.join('\n')}
                 `
-              }
-            ]);
+                }
+              ]);
 
-            return <Message role={User.AI} content="" isComponent={true}>
-              <RecipeCard recipe={result} />
-            </Message>;
+              return <Message role={User.AI} content="" isComponent={true}>
+                <RecipeCard recipe={result} />
+              </Message>;
+            } catch (error) {
+              return <Message role={User.AI} content="Ha ocurrido un error y no se pudo generar la receta. Intentalo de nuevo más tarde." />;
+            }
           }
         },
         generateTraduction: {
