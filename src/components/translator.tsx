@@ -44,7 +44,7 @@ export default function Translator({
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className="flex flex-col space-y-3 md:space-y-0 md:flex-row md:space-x-4">
           <div className="flex-1">
             <div className="min-h-[100px] md:min-h-[200px] text-lg p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg">
               {inputText}
