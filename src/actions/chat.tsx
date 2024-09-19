@@ -252,15 +252,31 @@ export async function submitUserMessage(input: string, config: ModelConfig, imag
     };
 
   } catch (error) {
-    console.log('ALGO HA FALLADO', error);
+    if ((error as Error).message.includes("Incorrect API key")) {
+      return {
+        id: generateId(),
+        role: 'assistant',
+        display: <Message role={User.AI} content="Lo siento 🥴, la API key proporcionada es incorrecta. Por favor, ingresa una API key valida para el modelo que seleccionaste." />
+      };
+    }
+
+    if (
+      (error as Error).message.includes("Please use API Key or other form of API consumer") ||
+      (error as Error).message.includes("API key not valid")
+    ) {
+      return {
+        id: generateId(),
+        role: 'assistant',
+        display: <Message role={User.AI} content="La API key que proporcionaste no es valida. Por favor, ingresa una API key valida para el modelo que seleccionaste." />
+      };
+    }
 
     return {
       id: generateId(),
       role: 'assistant',
-      display: <Message role={User.AI} content="Lo siento, ha ocurrido un error en mi sistema. Por favor intenta de nuevo." />
+      display: <Message role={User.AI} content="Lo siento, ha ocurrido un error en mi sistema. Por favor ingresa una nueva pregunta." />
     };
   }
-
 }
 
 // createAI creates a new ai/rsc instance.
